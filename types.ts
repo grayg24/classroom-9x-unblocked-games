@@ -15,14 +15,21 @@ export interface Category {
   icon: string;
 }
 
+export interface UserSettings {
+  customCursor: boolean;
+  animatedBg: boolean;
+  volumetricFog: boolean;
+}
+
 export interface User {
   username: string;
-  password?: string; // Stored in mock DB
+  password?: string;
   exp: number;
   level: number;
   currentTheme: string;
   unlockedThemes: string[];
   favorites: string[];
+  settings: UserSettings;
 }
 
 export enum AppRoute {
@@ -30,5 +37,6 @@ export enum AppRoute {
   GAME = 'game',
   CATEGORY = 'category',
   FAVORITES = 'favorites',
+  LIBRARY = 'library',
   SETTINGS = 'settings'
 }

@@ -8,6 +8,7 @@ import GameModal from './components/GameModal';
 import CategoryPage from './components/CategoryPage';
 import Favorites from './components/Favorites';
 import Library from './components/Library';
+import Settings from './components/Settings';
 
 const EXP_PER_PLAY = 25;
 const LEVEL_UP_BASE = 200;
@@ -18,7 +19,12 @@ const DEFAULT_USER: User = {
   level: 1,
   currentTheme: 'cyan',
   unlockedThemes: ['cyan'],
-  favorites: []
+  favorites: [],
+  settings: {
+    customCursor: true,
+    animatedBg: true,
+    volumetricFog: false
+  }
 };
 
 const App: React.FC = () => {
@@ -28,18 +34,39 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User>(DEFAULT_USER);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
 
-  // Load local profile on mount
   useEffect(() => {
-    const savedStats = localStorage.getItem('classroom9x_local_profile');
+    const savedStats = localStorage.getItem('classroom9x_local_profile_v2');
     if (savedStats) {
       setUser(JSON.parse(savedStats));
     }
   }, []);
 
-  // Sync profile to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('classroom9x_local_profile', JSON.stringify(user));
-    document.getElementById('app-body')?.setAttribute('data-theme', user.currentTheme);
+    localStorage.setItem('classroom9x_local_profile_v2', JSON.stringify(user));
+    
+    // Sync themes and global settings to DOM
+    const body = document.getElementById('app-body');
+    if (body) {
+      body.setAttribute('data-theme', user.currentTheme);
+      
+      if (user.settings.customCursor) {
+        body.classList.add('custom-cursor-enabled');
+      } else {
+        body.classList.remove('custom-cursor-enabled');
+      }
+
+      if (user.settings.animatedBg) {
+        body.classList.add('animated-bg-enabled');
+      } else {
+        body.classList.remove('animated-bg-enabled');
+      }
+
+      if (user.settings.volumetricFog) {
+        body.classList.add('volumetric-fog-enabled');
+      } else {
+        body.classList.remove('volumetric-fog-enabled');
+      }
+    }
   }, [user]);
 
   const addExp = () => {
@@ -64,6 +91,36 @@ const App: React.FC = () => {
     setUser({ ...user, currentTheme: theme });
   };
 
+  const updateSettings = (settings: Partial<User['settings']>) => {
+    setUser(prev => ({
+      ...prev,
+      settings: { ...prev.settings, ...settings }
+    }));
+  };
+
+  const redeemCode = (code: string) => {
+    const cleanCode = code.trim();
+    if (cleanCode === '9xIsBack') {
+      const allThemes = ['cyan', 'rose', 'emerald', 'amber', 'violet'];
+      setUser(prev => ({
+        ...prev,
+        level: prev.level + 100,
+        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, ...allThemes]))
+      }));
+      return { success: true, message: 'OPERATIVE CLEARANCE GRANTED: +100 LEVELS' };
+    }
+    
+    if (cleanCode === 'rainbow') {
+      setUser(prev => ({
+        ...prev,
+        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'rainbow']))
+      }));
+      return { success: true, message: 'MATRIX RGB THEME UNLOCKED' };
+    }
+
+    return { success: false, message: 'INVALID DECRYPTION KEY' };
+  };
+
   const toggleFavorite = (gameId: string) => {
     const newFavorites = user.favorites.includes(gameId) 
       ? user.favorites.filter(id => id !== gameId) 
@@ -73,7 +130,7 @@ const App: React.FC = () => {
 
   const handleGameSelect = (game: Game) => {
     setActiveGame(game);
-    addExp(); // Award EXP for launching a game
+    addExp();
   };
 
   const filteredGames = useMemo(() => {
@@ -85,7 +142,6 @@ const App: React.FC = () => {
   }, [searchQuery]);
 
   const renderContent = () => {
-    // If searching, always show filtered library view
     if (searchQuery) {
       return (
         <Library 
@@ -119,13 +175,23 @@ const App: React.FC = () => {
           />
         );
 
-      case AppRoute.SETTINGS:
+      case AppRoute.LIBRARY:
         return (
           <Library 
             games={GAMES_DATA} 
             favorites={user.favorites} 
             onToggleFavorite={toggleFavorite} 
             onPlayGame={handleGameSelect}
+          />
+        );
+
+      case AppRoute.SETTINGS:
+        return (
+          <Settings 
+            user={user}
+            onUpdateSettings={updateSettings}
+            onSetTheme={setTheme}
+            onRedeemCode={redeemCode}
           />
         );
 
@@ -137,7 +203,7 @@ const App: React.FC = () => {
             favorites={user.favorites} 
             onToggleFavorite={toggleFavorite} 
             onPlayGame={handleGameSelect}
-            onSwitchToLibrary={() => setCurrentView(AppRoute.SETTINGS)}
+            onSwitchToLibrary={() => setCurrentView(AppRoute.LIBRARY)}
           />
         );
     }

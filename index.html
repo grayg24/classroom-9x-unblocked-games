@@ -10,69 +10,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Modern CSS Variable Animation Engine */
-        @property --primary {
-          syntax: '<color>';
-          initial-value: #22d3ee;
-          inherits: true;
-        }
-
-        @property --primary-glow {
-          syntax: '<color>';
-          initial-value: rgba(34, 211, 238, 0.4);
-          inherits: true;
-        }
-
-        @property --primary-dark {
-          syntax: '<color>';
-          initial-value: #0891b2;
-          inherits: true;
-        }
+        @property --primary { syntax: '<color>'; initial-value: #22d3ee; inherits: true; }
+        @property --primary-glow { syntax: '<color>'; initial-value: rgba(34, 211, 238, 0.4); inherits: true; }
+        @property --primary-dark { syntax: '<color>'; initial-value: #0891b2; inherits: true; }
+        @property --theme-hue { syntax: '<number>'; initial-value: 0; inherits: true; }
 
         :root {
             --primary: #22d3ee;
             --primary-glow: rgba(34, 211, 238, 0.4);
             --primary-dark: #0891b2;
             --bg-dark: #020617;
-            --transition-speed: 1s; /* Smooth fade speed */
+            --transition-speed: 1s;
+            --theme-hue: 0;
         }
 
-        /* Dynamic Themes - Transitions are handled by @property animation */
-        [data-theme="cyan"] {
-            --primary: #22d3ee;
-            --primary-glow: rgba(34, 211, 238, 0.4);
-            --primary-dark: #0891b2;
-        }
-        [data-theme="rose"] { 
-            --primary: #fb7185; 
-            --primary-glow: rgba(251, 113, 133, 0.4); 
-            --primary-dark: #e11d48; 
-        }
-        [data-theme="emerald"] { 
-            --primary: #34d399; 
-            --primary-glow: rgba(52, 211, 153, 0.4); 
-            --primary-dark: #059669; 
-        }
-        [data-theme="amber"] { 
-            --primary: #fbbf24; 
-            --primary-glow: rgba(251, 191, 36, 0.4); 
-            --primary-dark: #d97706; 
-        }
-        [data-theme="violet"] { 
-            --primary: #a78bfa; 
-            --primary-glow: rgba(167, 139, 250, 0.4); 
-            --primary-dark: #7c3aed; 
+        [data-theme="cyan"] { --primary: #22d3ee; --primary-glow: rgba(34, 211, 238, 0.4); --primary-dark: #0891b2; }
+        [data-theme="rose"] { --primary: #fb7185; --primary-glow: rgba(251, 113, 133, 0.4); --primary-dark: #e11d48; }
+        [data-theme="emerald"] { --primary: #34d399; --primary-glow: rgba(52, 211, 153, 0.4); --primary-dark: #059669; }
+        [data-theme="amber"] { --primary: #fbbf24; --primary-glow: rgba(251, 191, 36, 0.4); --primary-dark: #d97706; }
+        [data-theme="violet"] { --primary: #a78bfa; --primary-glow: rgba(167, 139, 250, 0.4); --primary-dark: #7c3aed; }
+        
+        [data-theme="rainbow"] {
+            animation: rainbow-hue-cycle 10s linear infinite;
         }
 
-        /* CRITICAL: Force hide system cursor everywhere */
+        /* Derive rainbow colors from the animated hue property */
+        [data-theme="rainbow"], [data-theme="rainbow"] * {
+            --primary: hsl(var(--theme-hue), 100%, 65%);
+            --primary-glow: hsla(var(--theme-hue), 100%, 65%, 0.4);
+            --primary-dark: hsl(var(--theme-hue), 100%, 45%);
+            /* CRITICAL: Disable transitions on rainbow theme to prevent "glitchy" lagging of colors */
+            transition-duration: 0s !important;
+        }
+
+        @keyframes rainbow-hue-cycle {
+            from { --theme-hue: 0; }
+            to { --theme-hue: 360; }
+        }
+
         * {
-            cursor: none !important;
-            /* Every element now smoothly transitions theme colors */
             transition: color var(--transition-speed) ease-in-out, 
                         background-color var(--transition-speed) ease-in-out, 
                         border-color var(--transition-speed) ease-in-out, 
                         box-shadow var(--transition-speed) ease-in-out,
                         filter var(--transition-speed) ease-in-out;
+        }
+
+        /* Conditional Cursor Logic */
+        body.custom-cursor-enabled * {
+            cursor: none !important;
         }
 
         body {
@@ -88,14 +74,12 @@
         .shadow-theme { box-shadow: 0 0 20px var(--primary-glow) !important; }
         .drop-shadow-theme { filter: drop-shadow(0 0 15px var(--primary-glow)) !important; }
 
-        /* Ensure Icons also transition */
         svg, path {
             transition: fill var(--transition-speed) ease-in-out, stroke var(--transition-speed) ease-in-out !important;
         }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         
-        /* Noise Texture */
         .noise::before {
             content: "";
             position: fixed;
@@ -106,7 +90,6 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Scanlines */
         .scanlines::after {
             content: "";
             position: fixed;
@@ -117,7 +100,6 @@
             pointer-events: none;
         }
 
-        /* Animated Grid Background */
         .grid-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -127,8 +109,14 @@
             background-size: 50px 50px;
             transform: perspective(1000px) rotateX(60deg) translateY(-200px) scale(3);
             transform-origin: top;
-            animation: grid-move 40s linear infinite;
             z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        body.animated-bg-enabled .grid-bg {
+            animation: grid-move 40s linear infinite;
+            opacity: 1;
         }
 
         @keyframes grid-move {
@@ -136,7 +124,47 @@
             to { background-position: 0 500px; }
         }
 
-        /* Cursor - PERFECTLY CENTERED */
+        /* Volumetric Fog Effect */
+        .fog-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+            display: none;
+            opacity: 0.4;
+        }
+
+        body.volumetric-fog-enabled .fog-wrapper {
+            display: block;
+        }
+
+        .fog-layer {
+            position: absolute;
+            top: 0; left: 0; width: 300%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, var(--primary-glow) 0%, transparent 40%);
+            filter: blur(80px);
+            animation: fog-drift 60s linear infinite;
+        }
+
+        .fog-layer-2 {
+            position: absolute;
+            top: 0; left: -100%; width: 300%; height: 100%;
+            background: radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+            filter: blur(100px);
+            animation: fog-drift-reverse 45s linear infinite;
+        }
+
+        @keyframes fog-drift {
+            from { transform: translateX(-50%); }
+            to { transform: translateX(0%); }
+        }
+
+        @keyframes fog-drift-reverse {
+            from { transform: translateX(0%); }
+            to { transform: translateX(-50%); }
+        }
+
         .glow-cursor {
             width: 12px;
             height: 12px;
@@ -146,11 +174,16 @@
             pointer-events: none;
             z-index: 10000;
             mix-blend-mode: screen;
-            transform: translate(-50%, -50%); /* Centering logic */
+            transform: translate(-50%, -50%);
             box-shadow: 0 0 20px var(--primary);
             transition: background var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out, transform 0.1s ease-out;
-            left: -100px; /* Start off-screen */
+            left: -100px;
             top: -100px;
+            display: none;
+        }
+
+        body.custom-cursor-enabled .glow-cursor {
+            display: block;
         }
 
         .glow-cursor-follower {
@@ -161,11 +194,16 @@
             position: fixed;
             pointer-events: none;
             z-index: 9999;
-            transform: translate(-50%, -50%); /* Centering logic */
+            transform: translate(-50%, -50%);
             opacity: 0.3;
             transition: border-color var(--transition-speed) ease-in-out, width 0.3s, height 0.3s, left 0.15s ease-out, top 0.15s ease-out;
-            left: -100px; /* Start off-screen */
+            left: -100px;
             top: -100px;
+            display: none;
+        }
+
+        body.custom-cursor-enabled .glow-cursor-follower {
+            display: block;
         }
 
         .card-perspective { perspective: 1000px; }
@@ -187,6 +225,10 @@
 </head>
 <body class="noise scanlines" id="app-body">
     <div class="grid-bg"></div>
+    <div class="fog-wrapper">
+        <div class="fog-layer"></div>
+        <div class="fog-layer-2"></div>
+    </div>
     <div id="root"></div>
     <div class="glow-cursor" id="cursor"></div>
     <div class="glow-cursor-follower" id="cursor-follower"></div>
@@ -196,26 +238,29 @@
         const follower = document.getElementById('cursor-follower');
         
         document.addEventListener('mousemove', (e) => {
+            if (!document.body.classList.contains('custom-cursor-enabled')) return;
             window.requestAnimationFrame(() => {
                 cursor.style.left = e.clientX + 'px';
                 cursor.style.top = e.clientY + 'px';
-                
                 follower.style.left = e.clientX + 'px';
                 follower.style.top = e.clientY + 'px';
             });
         });
 
         document.addEventListener('mousedown', () => {
+            if (!document.body.classList.contains('custom-cursor-enabled')) return;
             cursor.style.transform = 'translate(-50%, -50%) scale(0.7)';
             follower.style.transform = 'translate(-50%, -50%) scale(1.6)';
         });
 
         document.addEventListener('mouseup', () => {
+            if (!document.body.classList.contains('custom-cursor-enabled')) return;
             cursor.style.transform = 'translate(-50%, -50%) scale(1)';
             follower.style.transform = 'translate(-50%, -50%) scale(1)';
         });
 
         window.setCursorActive = (active) => {
+            if (!document.body.classList.contains('custom-cursor-enabled')) return;
             if (active) {
                 follower.style.width = '50px';
                 follower.style.height = '50px';
