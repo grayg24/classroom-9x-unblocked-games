@@ -2,17 +2,19 @@
 import React from 'react';
 import { Game } from '../types';
 import GameCard from './GameCard';
-import { Sparkles, Zap, Trophy, Flame } from 'lucide-react';
+import { Sparkles, Zap, Trophy, Flame, ChevronRight } from 'lucide-react';
 
 interface HomeProps {
   games: Game[];
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onPlayGame: (game: Game) => void;
+  onSwitchToLibrary: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
+const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayGame, onSwitchToLibrary }) => {
   const featuredGames = games.filter(g => g.isFeatured);
-  const otherGames = games.filter(g => !g.isFeatured);
+  const otherGames = games.filter(g => !g.isFeatured).slice(0, 4);
 
   return (
     <div className="space-y-20 pb-20 animate-in fade-in duration-1000">
@@ -40,13 +42,15 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
             The fastest unblocked library on the web. Experience lag-free browser gaming with Classroom 9x Reworked.
           </p>
           <div className="flex gap-4">
-            <button className="border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all">
-              Library
+            <button 
+              onClick={onSwitchToLibrary}
+              className="bg-cyan-500 text-slate-950 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all hover:scale-105 shadow-theme"
+            >
+              Browse Library
             </button>
           </div>
         </div>
 
-        {/* Decorative elements */}
         <div className="absolute bottom-10 right-10 hidden lg:flex flex-col items-end opacity-20">
             <span className="font-orbitron font-black text-8xl leading-none">9X</span>
             <span className="font-bold tracking-[0.5em] text-sm">REWORKED</span>
@@ -71,7 +75,8 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
               key={game.id} 
               game={game} 
               isFavorite={favorites.includes(game.id)} 
-              onToggleFavorite={onToggleFavorite} 
+              onToggleFavorite={onToggleFavorite}
+              onPlay={onPlayGame}
             />
           ))}
         </div>
@@ -89,9 +94,12 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
               <div className="h-1 w-20 bg-rose-500 mt-1 rounded-full"></div>
             </div>
           </div>
-          <button className="text-slate-500 hover:text-white transition-colors text-xs font-black uppercase tracking-widest flex items-center gap-2">
-            View Market
-            <Trophy size={14} />
+          <button 
+            onClick={onSwitchToLibrary}
+            className="text-slate-500 hover:text-white transition-colors text-xs font-black uppercase tracking-widest flex items-center gap-2"
+          >
+            View Library
+            <ChevronRight size={14} />
           </button>
         </div>
 
@@ -101,7 +109,8 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
               key={game.id} 
               game={game} 
               isFavorite={favorites.includes(game.id)} 
-              onToggleFavorite={onToggleFavorite} 
+              onToggleFavorite={onToggleFavorite}
+              onPlay={onPlayGame}
             />
           ))}
         </div>
@@ -114,9 +123,9 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite }) => {
             <span className="font-orbitron font-black uppercase text-sm tracking-[0.2em]">Classroom 9x v4.0</span>
           </div>
           <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            <a href="#" className="hover:text-cyan-400 transition-colors">Infrastructure</a>
-            <a href="#" className="hover:text-cyan-400 transition-colors">Legal Disclaimers</a>
-            <a href="#" className="hover:text-cyan-400 transition-colors">Dev Portal</a>
+            <button className="hover:text-cyan-400 transition-colors">Infrastructure</button>
+            <button className="hover:text-cyan-400 transition-colors">Legal Disclaimers</button>
+            <button className="hover:text-cyan-400 transition-colors">Dev Portal</button>
           </div>
       </footer>
     </div>

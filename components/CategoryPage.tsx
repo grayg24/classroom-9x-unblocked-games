@@ -10,9 +10,10 @@ interface CategoryPageProps {
   games: Game[];
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onPlayGame: (game: Game) => void;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorites, onToggleFavorite }) => {
+const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorites, onToggleFavorite, onPlayGame }) => {
   const category = CATEGORIES.find(c => c.id === categoryId);
   const categoryGames = games.filter(g => g.category === categoryId);
 
@@ -20,7 +21,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorite
 
   return (
     <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-      {/* Header */}
       <div className="flex items-end justify-between border-b border-slate-900 pb-6">
         <div className="flex items-center gap-4">
           <div className="p-4 bg-cyan-500 text-slate-950 rounded-2xl shadow-xl shadow-cyan-500/20">
@@ -28,27 +28,24 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorite
           </div>
           <div>
             <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-              {category.name} <span className="text-cyan-400">Games</span>
+              {category.name} <span className="text-cyan-400">Tactics</span>
             </h1>
-            <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
-              <span>Home</span>
-              <ChevronRight size={14} />
-              <span className="text-slate-400 font-medium">Categories</span>
-              <ChevronRight size={14} />
-              <span className="text-cyan-400/70 font-bold">{category.name}</span>
+            <div className="flex items-center gap-2 text-slate-500 text-xs mt-2 font-black uppercase tracking-widest">
+              <span className="text-theme">Archive</span>
+              <ChevronRight size={10} />
+              <span>{category.name}</span>
             </div>
           </div>
         </div>
         <div className="hidden md:block text-right">
           <div className="text-2xl font-black text-white">{categoryGames.length}</div>
-          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Total Games</div>
+          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Files Ready</div>
         </div>
       </div>
 
-      {/* Grid */}
       {categoryGames.length === 0 ? (
         <div className="text-center py-20 bg-slate-900/30 rounded-3xl border border-dashed border-slate-800">
-           <p className="text-slate-500">Coming soon! More {category.name} titles are being curated.</p>
+           <p className="text-slate-500 uppercase font-black text-xs tracking-widest">Awaiting Fresh Deployment...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -58,6 +55,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorite
               game={game} 
               isFavorite={favorites.includes(game.id)} 
               onToggleFavorite={onToggleFavorite} 
+              onPlay={onPlayGame}
             />
           ))}
         </div>

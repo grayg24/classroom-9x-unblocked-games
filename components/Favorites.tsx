@@ -8,42 +8,35 @@ interface FavoritesProps {
   games: Game[];
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onPlayGame: (game: Game) => void;
 }
 
-const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorite }) => {
+const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorite, onPlayGame }) => {
   const favoriteGames = games.filter(g => favorites.includes(g.id));
 
   return (
     <div className="space-y-8 animate-in zoom-in-95 duration-500">
-      {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <div className="p-4 bg-pink-500 text-white rounded-2xl shadow-xl shadow-pink-500/20">
           <Heart className="fill-current" size={32} />
         </div>
         <div>
           <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-            My <span className="text-pink-500">Collection</span>
+            Personal <span className="text-pink-500">Vault</span>
           </h1>
-          <p className="text-slate-500 text-sm">Your personally curated list of top-tier entertainment.</p>
+          <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">High-Priority Operations Only</p>
         </div>
       </div>
 
-      {/* Content */}
       {favoriteGames.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 bg-slate-900/30 rounded-[3rem] border-2 border-dashed border-slate-800">
           <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6">
             <Ghost className="text-slate-600" size={40} />
           </div>
-          <h3 className="text-xl font-bold text-slate-400 mb-2">Your collection is empty</h3>
-          <p className="text-slate-600 text-center max-w-xs mb-8">
-            Start adding games to your favorites by clicking the heart icon on any game card!
+          <h3 className="text-xl font-bold text-slate-400 mb-2 font-orbitron uppercase">Vault Empty</h3>
+          <p className="text-slate-600 text-center max-w-xs mb-8 text-xs font-bold uppercase tracking-wide">
+            Add units to your vault by engaging the heart icon on game files.
           </p>
-          <a 
-            href="#/" 
-            className="bg-cyan-500 text-slate-950 px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-cyan-600 transition-all active:scale-95 shadow-lg shadow-cyan-500/20"
-          >
-            Go Explore
-          </a>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -53,6 +46,7 @@ const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorit
               game={game} 
               isFavorite={true} 
               onToggleFavorite={onToggleFavorite} 
+              onPlay={onPlayGame}
             />
           ))}
         </div>
