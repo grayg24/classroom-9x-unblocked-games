@@ -17,12 +17,12 @@ const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorit
   return (
     <div className="space-y-8 animate-in zoom-in-95 duration-500">
       <div className="flex items-center gap-4 mb-8">
-        <div className="p-4 bg-pink-500 text-white rounded-2xl shadow-xl shadow-pink-500/20">
+        <div className="p-4 bg-theme/20 text-theme rounded-2xl shadow-xl border border-theme/20">
           <Heart className="fill-current" size={32} />
         </div>
         <div>
           <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-            My <span className="text-pink-500">Favorites</span>
+            My <span className="text-theme">Favorites</span>
           </h1>
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">High-Priority Operations Only</p>
         </div>

@@ -23,12 +23,12 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ categoryId, games, favorite
     <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
       <div className="flex items-end justify-between border-b border-slate-900 pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-4 bg-cyan-500 text-slate-950 rounded-2xl shadow-xl shadow-cyan-500/20">
+          <div className="p-4 bg-theme text-slate-950 rounded-2xl shadow-xl shadow-theme">
             {getIcon(category.icon, 32)}
           </div>
           <div>
             <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-              {category.name} <span className="text-cyan-400">Tactics</span>
+              {category.name} <span className="text-theme">Tactics</span>
             </h1>
             <div className="flex items-center gap-2 text-slate-500 text-xs mt-2 font-black uppercase tracking-widest">
               <span className="text-theme">Archive</span>

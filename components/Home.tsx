@@ -2,7 +2,7 @@
 import React from 'react';
 import { Game } from '../types';
 import GameCard from './GameCard';
-import { Sparkles, Zap, Trophy, Flame, ChevronRight } from 'lucide-react';
+import { Sparkles, Zap, Flame, ChevronRight } from 'lucide-react';
 
 interface HomeProps {
   games: Game[];
@@ -31,12 +31,12 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
         </div>
         
         <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 max-w-3xl space-y-6">
-          <div className="flex items-center gap-2 text-cyan-400 font-bold uppercase tracking-[0.3em] text-xs">
+          <div className="flex items-center gap-2 text-theme font-bold uppercase tracking-[0.3em] text-xs">
             <Zap size={14} className="fill-current" />
             Unblocked Games
           </div>
           <h1 className="font-orbitron font-black text-5xl md:text-7xl italic leading-none text-white tracking-tighter">
-            NEXT GEN <br/><span className="text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">GAMING</span>
+            NEXT GEN <br/><span className="text-theme drop-shadow-theme">GAMING</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-md">
             The fastest unblocked library on the web. Experience lag-free browser gaming with Classroom 9x Reworked.
@@ -44,7 +44,7 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
           <div className="flex gap-4">
             <button 
               onClick={onSwitchToLibrary}
-              className="bg-cyan-500 text-slate-950 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all hover:scale-105 shadow-theme"
+              className="bg-theme text-slate-950 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-transform hover:scale-105 shadow-theme"
             >
               Browse Library
             </button>
@@ -53,19 +53,19 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
 
         <div className="absolute bottom-10 right-10 hidden lg:flex flex-col items-end opacity-20">
             <span className="font-orbitron font-black text-8xl leading-none">9X</span>
-            <span className="font-bold tracking-[0.5em] text-sm">REWORKED</span>
+            <span className="font-bold tracking-[0.5em] text-sm uppercase">Reworked</span>
         </div>
       </section>
 
       {/* Featured Section */}
       <section>
         <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 bg-cyan-500/20 rounded-2xl flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+          <div className="w-12 h-12 bg-theme/20 rounded-2xl flex items-center justify-center text-theme border border-theme/20">
              <Sparkles className="animate-pulse" />
           </div>
           <div>
-            <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Prime <span className="text-cyan-400">Picks</span></h2>
-            <div className="h-1 w-20 bg-cyan-500 mt-1 rounded-full"></div>
+            <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Prime <span className="text-theme">Picks</span></h2>
+            <div className="h-1 w-20 bg-theme mt-1 rounded-full"></div>
           </div>
         </div>
         
@@ -82,16 +82,16 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
         </div>
       </section>
 
-      {/* Trending Row */}
+      {/* Trending Row - Now Theme Aware */}
       <section>
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-rose-500/20 rounded-2xl flex items-center justify-center text-rose-400 border border-rose-500/20">
+            <div className="w-12 h-12 bg-theme/20 rounded-2xl flex items-center justify-center text-theme border border-theme/20">
                <Flame className="animate-bounce" />
             </div>
             <div>
-              <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Hot <span className="text-rose-500">Trending</span></h2>
-              <div className="h-1 w-20 bg-rose-500 mt-1 rounded-full"></div>
+              <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Hot <span className="text-theme">Trending</span></h2>
+              <div className="h-1 w-20 bg-theme mt-1 rounded-full"></div>
             </div>
           </div>
           <button 
@@ -119,13 +119,13 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
       {/* Footer Branding */}
       <footer className="pt-20 border-t border-slate-900 pb-10 flex flex-col md:flex-row items-center justify-between opacity-40 hover:opacity-100 transition-opacity">
           <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
+            <div className="w-2 h-2 rounded-full bg-theme"></div>
             <span className="font-orbitron font-black uppercase text-sm tracking-[0.2em]">Classroom 9x v4.0</span>
           </div>
           <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            <button className="hover:text-cyan-400 transition-colors">Infrastructure</button>
-            <button className="hover:text-cyan-400 transition-colors">Legal Disclaimers</button>
-            <button className="hover:text-cyan-400 transition-colors">Dev Portal</button>
+            <button className="hover:text-theme transition-colors">Infrastructure</button>
+            <button className="hover:text-theme transition-colors">Legal Disclaimers</button>
+            <button className="hover:text-theme transition-colors">Dev Portal</button>
           </div>
       </footer>
     </div>

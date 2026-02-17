@@ -2,7 +2,7 @@
 import React from 'react';
 import { Game } from '../types';
 import GameCard from './GameCard';
-import { LayoutGrid, Library as LibraryIcon } from 'lucide-react';
+import { Library as LibraryIcon } from 'lucide-react';
 
 interface LibraryProps {
   games: Game[];
@@ -17,12 +17,12 @@ const Library: React.FC<LibraryProps> = ({ games, favorites, onToggleFavorite, o
       {/* Header */}
       <div className="flex items-end justify-between border-b border-slate-900 pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-4 bg-cyan-500 text-slate-950 rounded-2xl shadow-xl shadow-cyan-500/20">
+          <div className="p-4 bg-theme text-slate-950 rounded-2xl shadow-xl shadow-theme">
             <LibraryIcon size={32} />
           </div>
           <div>
             <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-              Games <span className="text-cyan-400">Library</span>
+              Games <span className="text-theme">Library</span>
             </h1>
             <p className="text-slate-500 text-sm mt-1 uppercase font-black tracking-widest">Complete Intel Database</p>
           </div>

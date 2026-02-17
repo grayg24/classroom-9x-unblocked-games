@@ -10,22 +10,69 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #22d3ee; /* cyan-400 */
-            --primary-glow: rgba(34, 211, 238, 0.4);
-            --primary-dark: #0891b2; /* cyan-600 */
-            --bg-dark: #020617;
+        /* Modern CSS Variable Animation Engine */
+        @property --primary {
+          syntax: '<color>';
+          initial-value: #22d3ee;
+          inherits: true;
         }
 
-        /* Dynamic Themes */
-        [data-theme="rose"] { --primary: #fb7185; --primary-glow: rgba(251, 113, 133, 0.4); --primary-dark: #e11d48; }
-        [data-theme="emerald"] { --primary: #34d399; --primary-glow: rgba(52, 211, 153, 0.4); --primary-dark: #059669; }
-        [data-theme="amber"] { --primary: #fbbf24; --primary-glow: rgba(251, 191, 36, 0.4); --primary-dark: #d97706; }
-        [data-theme="violet"] { --primary: #a78bfa; --primary-glow: rgba(167, 139, 250, 0.4); --primary-dark: #7c3aed; }
+        @property --primary-glow {
+          syntax: '<color>';
+          initial-value: rgba(34, 211, 238, 0.4);
+          inherits: true;
+        }
+
+        @property --primary-dark {
+          syntax: '<color>';
+          initial-value: #0891b2;
+          inherits: true;
+        }
+
+        :root {
+            --primary: #22d3ee;
+            --primary-glow: rgba(34, 211, 238, 0.4);
+            --primary-dark: #0891b2;
+            --bg-dark: #020617;
+            --transition-speed: 1s; /* Smooth fade speed */
+        }
+
+        /* Dynamic Themes - Transitions are handled by @property animation */
+        [data-theme="cyan"] {
+            --primary: #22d3ee;
+            --primary-glow: rgba(34, 211, 238, 0.4);
+            --primary-dark: #0891b2;
+        }
+        [data-theme="rose"] { 
+            --primary: #fb7185; 
+            --primary-glow: rgba(251, 113, 133, 0.4); 
+            --primary-dark: #e11d48; 
+        }
+        [data-theme="emerald"] { 
+            --primary: #34d399; 
+            --primary-glow: rgba(52, 211, 153, 0.4); 
+            --primary-dark: #059669; 
+        }
+        [data-theme="amber"] { 
+            --primary: #fbbf24; 
+            --primary-glow: rgba(251, 191, 36, 0.4); 
+            --primary-dark: #d97706; 
+        }
+        [data-theme="violet"] { 
+            --primary: #a78bfa; 
+            --primary-glow: rgba(167, 139, 250, 0.4); 
+            --primary-dark: #7c3aed; 
+        }
 
         /* CRITICAL: Force hide system cursor everywhere */
         * {
             cursor: none !important;
+            /* Every element now smoothly transitions theme colors */
+            transition: color var(--transition-speed) ease-in-out, 
+                        background-color var(--transition-speed) ease-in-out, 
+                        border-color var(--transition-speed) ease-in-out, 
+                        box-shadow var(--transition-speed) ease-in-out,
+                        filter var(--transition-speed) ease-in-out;
         }
 
         body {
@@ -35,10 +82,16 @@
             overflow-x: hidden;
         }
 
-        .text-theme { color: var(--primary); }
-        .bg-theme { background-color: var(--primary); }
-        .border-theme { border-color: var(--primary); }
-        .shadow-theme { box-shadow: 0 0 20px var(--primary-glow); }
+        .text-theme { color: var(--primary) !important; }
+        .bg-theme { background-color: var(--primary) !important; }
+        .border-theme { border-color: var(--primary) !important; }
+        .shadow-theme { box-shadow: 0 0 20px var(--primary-glow) !important; }
+        .drop-shadow-theme { filter: drop-shadow(0 0 15px var(--primary-glow)) !important; }
+
+        /* Ensure Icons also transition */
+        svg, path {
+            transition: fill var(--transition-speed) ease-in-out, stroke var(--transition-speed) ease-in-out !important;
+        }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         
@@ -95,7 +148,7 @@
             mix-blend-mode: screen;
             transform: translate(-50%, -50%); /* Centering logic */
             box-shadow: 0 0 20px var(--primary);
-            transition: background 0.3s, box-shadow 0.3s, transform 0.1s ease-out;
+            transition: background var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out, transform 0.1s ease-out;
             left: -100px; /* Start off-screen */
             top: -100px;
         }
@@ -110,7 +163,7 @@
             z-index: 9999;
             transform: translate(-50%, -50%); /* Centering logic */
             opacity: 0.3;
-            transition: border-color 0.3s, width 0.3s, height 0.3s, left 0.15s ease-out, top 0.15s ease-out;
+            transition: border-color var(--transition-speed) ease-in-out, width 0.3s, height 0.3s, left 0.15s ease-out, top 0.15s ease-out;
             left: -100px; /* Start off-screen */
             top: -100px;
         }

@@ -20,10 +20,10 @@ const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite,
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="relative bg-slate-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-800 group-hover:border-cyan-500/50 transition-all duration-500 transform group-hover:-translate-y-3 group-hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+      <div className="relative bg-slate-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-800 group-hover:border-[var(--primary)]/50 transition-all duration-500 transform group-hover:-translate-y-3 group-hover:shadow-[0_20px_50px_var(--primary-glow)]">
         
-        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/60 transition-all duration-500 rounded-tr-2xl"></div>
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/60 transition-all duration-500 rounded-bl-2xl"></div>
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[var(--primary)]/0 group-hover:border-[var(--primary)]/60 transition-all duration-500 rounded-tr-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[var(--primary)]/0 group-hover:border-[var(--primary)]/60 transition-all duration-500 rounded-bl-2xl"></div>
 
         <div className="aspect-video overflow-hidden relative">
           <img 
@@ -37,7 +37,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite,
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
             <button 
               onClick={() => onPlay(game)}
-              className="bg-cyan-500 text-slate-950 p-5 rounded-full shadow-[0_0_30px_rgba(34,211,238,0.6)] transform hover:scale-110 active:scale-90 transition-all z-20"
+              className="bg-theme text-slate-950 p-5 rounded-full shadow-[0_0_30px_var(--primary-glow)] transform hover:scale-110 active:scale-90 transition-all z-20"
             >
               <Play className="fill-current w-8 h-8 translate-x-0.5" />
             </button>
@@ -63,7 +63,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite,
 
         <div className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-orbitron font-bold text-slate-100 group-hover:text-cyan-400 transition-colors truncate">
+            <h3 className="font-orbitron font-bold text-slate-100 group-hover:text-theme transition-colors truncate">
               {game.title}
             </h3>
             <div className="flex items-center gap-1 text-yellow-500 shrink-0">
@@ -77,7 +77,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite,
           
           <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between opacity-50 group-hover:opacity-100 transition-opacity">
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{game.category}</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-theme animate-pulse"></div>
           </div>
         </div>
 

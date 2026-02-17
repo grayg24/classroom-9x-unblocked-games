@@ -30,11 +30,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
   );
 
   const themeOptions = [
-    { id: 'cyan', label: 'Default', level: 1 },
-    { id: 'rose', label: 'Neon Rose', level: 5 },
-    { id: 'emerald', label: 'Emerald', level: 10 },
-    { id: 'amber', label: 'Amber', level: 15 },
-    { id: 'violet', label: 'Ethereal', level: 20 },
+    { id: 'cyan', label: 'Default', level: 1, color: '#22d3ee' },
+    { id: 'rose', label: 'Neon Rose', level: 5, color: '#fb7185' },
+    { id: 'emerald', label: 'Emerald', level: 10, color: '#34d399' },
+    { id: 'amber', label: 'Amber', level: 15, color: '#fbbf24' },
+    { id: 'violet', label: 'Ethereal', level: 20, color: '#a78bfa' },
   ];
 
   return (
@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
             key={cat.id}
             onClick={() => onViewChange(AppRoute.CATEGORY, cat.id)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-              currentView === AppRoute.CATEGORY && (cat.id as any) === (cat.id) // Simplified check
+              currentView === AppRoute.CATEGORY && (cat.id as any) === (cat.id)
                 ? 'bg-[var(--primary)]/10 text-theme' 
                 : 'text-slate-400 hover:bg-slate-900 hover:text-white'
             }`}
@@ -75,6 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
         <div className="grid grid-cols-5 gap-2 px-4">
           {themeOptions.map((t) => {
             const isLocked = user.level < t.level;
+            const isActive = user.currentTheme === t.id;
             return (
               <button 
                 key={t.id}
@@ -82,8 +83,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
                 onClick={() => onSetTheme(t.id)}
                 title={isLocked ? `Unlocks at LVL ${t.level}` : t.label}
                 className={`aspect-square rounded-lg border-2 transition-all flex items-center justify-center overflow-hidden ${
-                  user.currentTheme === t.id ? 'border-theme scale-110 shadow-theme' : 'border-slate-800'
-                } ${isLocked ? 'bg-slate-900/50 cursor-not-allowed border-slate-900' : 'hover:scale-110'}`}
+                  isActive ? 'border-white scale-110' : 'border-slate-800'
+                } ${isLocked ? 'bg-slate-900/50 cursor-not-allowed border-slate-900' : 'hover:scale-110 active:scale-95'}`}
+                style={isActive && !isLocked ? { boxShadow: `0 0 15px ${t.color}66` } : {}}
               >
                  {isLocked ? (
                    <div className="flex flex-col items-center justify-center gap-0.5 text-slate-500">
@@ -91,7 +93,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
                      <span className="text-[9px] font-black leading-none">{t.level}</span>
                    </div>
                  ) : (
-                   <div className={`w-full h-full bg-theme opacity-80`}></div>
+                   <div 
+                    className="w-full h-full opacity-90 hover:opacity-100 transition-opacity" 
+                    style={{ backgroundColor: t.color }}
+                   />
                  )}
               </button>
             );
