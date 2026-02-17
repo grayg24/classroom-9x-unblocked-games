@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AppRoute, Game } from './types';
+import { AppRoute, Game, User } from './types';
 import { GAMES_DATA, CATEGORIES } from './constants';
 import Layout from './components/Layout';
 import Home from './components/Home';
@@ -8,30 +8,40 @@ import GamePlayer from './components/GamePlayer';
 import CategoryPage from './components/CategoryPage';
 import Favorites from './components/Favorites';
 
+const EXP_PER_PLAY = 25;
+const LEVEL_UP_BASE = 200;
+
 const App: React.FC = () => {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(AppRoute.HOME);
   const [routeParam, setRouteParam] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
-  // Initialize favorites from localStorage
+  // Load active session on mount
   useEffect(() => {
-    const saved = localStorage.getItem('nebula_favorites');
-    if (saved) {
-      try {
-        setFavorites(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load favorites", e);
-      }
+    const activeSession = localStorage.getItem('classroom9x_active_user');
+    if (activeSession) {
+      const users = JSON.parse(localStorage.getItem('classroom9x_users') || '[]');
+      const found = users.find((u: User) => u.username === activeSession);
+      if (found) setUser(found);
     }
   }, []);
 
-  // Update localStorage when favorites change
+  // Sync active user progress to the "database" (localStorage users list)
   useEffect(() => {
-    localStorage.setItem('nebula_favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (user) {
+      const users = JSON.parse(localStorage.getItem('classroom9x_users') || '[]');
+      const updatedUsers = users.map((u: User) => u.username === user.username ? user : u);
+      localStorage.setItem('classroom9x_users', JSON.stringify(updatedUsers));
+      localStorage.setItem('classroom9x_active_user', user.username);
+      document.getElementById('app-body')?.setAttribute('data-theme', user.currentTheme);
+    } else {
+      localStorage.removeItem('classroom9x_active_user');
+      document.getElementById('app-body')?.removeAttribute('data-theme');
+    }
+  }, [user]);
 
-  // Handle Hash Routing manually for this environment
+  // Hash Routing
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '');
@@ -44,29 +54,85 @@ const App: React.FC = () => {
         setCurrentRoute(route as AppRoute);
         setRouteParam(param || null);
       }
-      // Scroll to top on route change
       window.scrollTo(0, 0);
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    handleHashChange(); // Initialize
-
+    handleHashChange();
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  const handleLogin = (username: string, password?: string) => {
+    const users = JSON.parse(localStorage.getItem('classroom9x_users') || '[]');
+    const found = users.find((u: any) => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+    
+    if (found) {
+      setUser(found);
+      return { success: true };
+    }
+    return { success: false, message: 'Invalid credentials' };
+  };
+
+  const handleSignUp = (username: string, password?: string) => {
+    const users = JSON.parse(localStorage.getItem('classroom9x_users') || '[]');
+    const exists = users.find((u: any) => u.username.toLowerCase() === username.toLowerCase());
+    
+    if (exists) {
+      return { success: false, message: 'User already exists' };
+    }
+
+    const newUser: User = {
+      username,
+      password,
+      exp: 0,
+      level: 1,
+      currentTheme: 'cyan',
+      unlockedThemes: ['cyan'],
+      favorites: []
+    };
+
+    users.push(newUser);
+    localStorage.setItem('classroom9x_users', JSON.stringify(users));
+    setUser(newUser);
+    return { success: true };
+  };
+
+  const addExp = () => {
+    if (!user) return;
+    
+    const newExp = user.exp + EXP_PER_PLAY;
+    const requiredForNext = user.level * LEVEL_UP_BASE;
+    
+    let newLevel = user.level;
+    let unlocked = [...user.unlockedThemes];
+    
+    if (newExp >= requiredForNext) {
+      newLevel += 1;
+      if (newLevel === 2 && !unlocked.includes('rose')) unlocked.push('rose');
+      if (newLevel === 4 && !unlocked.includes('emerald')) unlocked.push('emerald');
+      if (newLevel === 6 && !unlocked.includes('amber')) unlocked.push('amber');
+      if (newLevel === 10 && !unlocked.includes('violet')) unlocked.push('violet');
+    }
+
+    setUser({ ...user, exp: newExp, level: newLevel, unlockedThemes: unlocked });
+  };
+
+  const setTheme = (theme: string) => {
+    if (user) setUser({ ...user, currentTheme: theme });
+  };
+
   const toggleFavorite = (gameId: string) => {
-    setFavorites(prev => 
-      prev.includes(gameId) 
-        ? prev.filter(id => id !== gameId) 
-        : [...prev, gameId]
-    );
+    if (!user) return;
+    const newFavorites = user.favorites.includes(gameId) 
+      ? user.favorites.filter(id => id !== gameId) 
+      : [...user.favorites, gameId];
+    setUser({ ...user, favorites: newFavorites });
   };
 
   const filteredGames = useMemo(() => {
     if (!searchQuery) return GAMES_DATA;
     return GAMES_DATA.filter(game => 
       game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       game.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
@@ -78,17 +144,19 @@ const App: React.FC = () => {
         return game ? (
           <GamePlayer 
             game={game} 
-            isFavorite={favorites.includes(game.id)} 
+            isFavorite={user ? user.favorites.includes(game.id) : false} 
             onToggleFavorite={toggleFavorite} 
+            onPlay={addExp}
+            user={user}
           />
-        ) : <Home games={filteredGames} favorites={favorites} onToggleFavorite={toggleFavorite} />;
+        ) : <Home games={filteredGames} favorites={user?.favorites || []} onToggleFavorite={toggleFavorite} />;
       
       case AppRoute.CATEGORY:
         return (
           <CategoryPage 
             categoryId={routeParam || ''} 
             games={GAMES_DATA} 
-            favorites={favorites}
+            favorites={user?.favorites || []}
             onToggleFavorite={toggleFavorite}
           />
         );
@@ -97,20 +165,25 @@ const App: React.FC = () => {
         return (
           <Favorites 
             games={GAMES_DATA} 
-            favorites={favorites} 
+            favorites={user?.favorites || []} 
             onToggleFavorite={toggleFavorite} 
           />
         );
 
       case AppRoute.HOME:
       default:
-        return <Home games={filteredGames} favorites={favorites} onToggleFavorite={toggleFavorite} />;
+        return <Home games={filteredGames} favorites={user?.favorites || []} onToggleFavorite={toggleFavorite} />;
     }
   };
 
   return (
     <Layout 
+      user={user}
       onSearch={setSearchQuery} 
+      onLogin={handleLogin}
+      onSignUp={handleSignUp}
+      onLogout={() => setUser(null)}
+      onSetTheme={setTheme}
       currentRoute={currentRoute} 
       currentParam={routeParam}
     >

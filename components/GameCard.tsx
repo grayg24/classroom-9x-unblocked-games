@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Game } from '../types';
-import { Play, Heart, Star } from 'lucide-react';
+import { Play, Heart, Star, Zap } from 'lucide-react';
 
 interface GameCardProps {
   game: Game;
@@ -10,61 +10,90 @@ interface GameCardProps {
 }
 
 const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite }) => {
+  const handleMouseEnter = () => (window as any).setCursorActive(true);
+  const handleMouseLeave = () => (window as any).setCursorActive(false);
+
   return (
-    <div className="group relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-cyan-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/10">
-      {/* Thumbnail Container */}
-      <div className="aspect-video overflow-hidden relative">
-        <img 
-          src={game.thumbnail} 
-          alt={game.title} 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-        />
+    <div 
+      className="card-perspective group"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="relative bg-slate-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-800 group-hover:border-cyan-500/50 transition-all duration-500 transform group-hover:-translate-y-3 group-hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
         
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <a 
-            href={`#/game/${game.id}`}
-            className="bg-cyan-500 text-slate-950 p-4 rounded-full shadow-xl shadow-cyan-500/40 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-75 active:scale-90"
+        {/* Animated Corner Accents */}
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/60 transition-all duration-500 rounded-tr-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/60 transition-all duration-500 rounded-bl-2xl"></div>
+
+        {/* Thumbnail Container */}
+        <div className="aspect-video overflow-hidden relative">
+          <img 
+            src={game.thumbnail} 
+            alt={game.title} 
+            className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+          />
+          
+          {/* Neon Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+
+          {/* Hover Play Button */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+            <a 
+              href={`#/game/${game.id}`}
+              className="bg-cyan-500 text-slate-950 p-5 rounded-full shadow-[0_0_30px_rgba(34,211,238,0.6)] transform hover:scale-110 active:scale-90 transition-all"
+            >
+              <Play className="fill-current w-8 h-8 translate-x-0.5" />
+            </a>
+          </div>
+
+          {/* Favorite Button */}
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              onToggleFavorite(game.id);
+            }}
+            className={`absolute top-3 right-3 p-2.5 rounded-xl backdrop-blur-xl border border-white/10 transition-all z-20 ${
+              isFavorite 
+                ? 'bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)]' 
+                : 'bg-black/40 text-white hover:bg-rose-500/20'
+            }`}
           >
-            <Play className="fill-current w-6 h-6" />
-          </a>
+            <Heart size={18} className={isFavorite ? 'fill-current' : ''} />
+          </button>
+
+          {/* New Label */}
+          {game.isFeatured && (
+            <div className="absolute top-3 left-3 px-2 py-0.5 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase rounded shadow-lg flex items-center gap-1">
+              <Zap size={10} className="fill-current" />
+              Featured
+            </div>
+          )}
         </div>
 
-        {/* Favorite Button */}
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            onToggleFavorite(game.id);
-          }}
-          className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-md border border-white/10 transition-colors z-20 ${
-            isFavorite ? 'bg-pink-500 text-white' : 'bg-black/40 text-white hover:bg-black/60'
-          }`}
-        >
-          <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
-        </button>
-
-        {/* Category Badge */}
-        <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-md border border-white/5 text-[10px] font-bold text-cyan-400 uppercase tracking-wider group-hover:bg-cyan-500 group-hover:text-slate-950 transition-colors duration-300">
-          {game.category}
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-1">
-          <h3 className="font-bold text-slate-100 group-hover:text-cyan-400 transition-colors line-clamp-1">{game.title}</h3>
-          <div className="flex items-center gap-1 text-yellow-500">
-            <Star size={12} className="fill-current" />
-            <span className="text-xs font-bold">4.8</span>
+        {/* Info Area */}
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-orbitron font-bold text-slate-100 group-hover:text-cyan-400 transition-colors truncate">
+              {game.title}
+            </h3>
+            <div className="flex items-center gap-1 text-yellow-500 shrink-0">
+              <Star size={12} className="fill-current" />
+              <span className="text-[11px] font-black">4.9</span>
+            </div>
+          </div>
+          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed h-8 group-hover:text-slate-400 transition-colors">
+            {game.description}
+          </p>
+          
+          <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between opacity-50 group-hover:opacity-100 transition-opacity">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{game.category}</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></div>
           </div>
         </div>
-        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-          {game.description}
-        </p>
-      </div>
 
-      {/* Action Links (Invisible for Layout logic, but good for SEO/A11y) */}
-      <a href={`#/game/${game.id}`} className="absolute inset-0 z-10"></a>
+        {/* Link Cover */}
+        <a href={`#/game/${game.id}`} className="absolute inset-0 z-10"></a>
+      </div>
     </div>
   );
 };

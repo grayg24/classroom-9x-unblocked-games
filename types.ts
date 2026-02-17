@@ -15,9 +15,20 @@ export interface Category {
   icon: string;
 }
 
+export interface User {
+  username: string;
+  password?: string; // Stored in mock DB
+  exp: number;
+  level: number;
+  currentTheme: string;
+  unlockedThemes: string[];
+  favorites: string[];
+}
+
 export enum AppRoute {
   HOME = 'home',
   GAME = 'game',
   CATEGORY = 'category',
-  FAVORITES = 'favorites'
+  FAVORITES = 'favorites',
+  SETTINGS = 'settings'
 }
