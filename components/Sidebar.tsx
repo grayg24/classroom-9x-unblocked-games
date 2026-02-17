@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
         <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4">Tactical Hub</p>
         <NavItem onClick={() => onViewChange(AppRoute.HOME)} icon={Home} label="Home Page" active={currentView === AppRoute.HOME} />
         <NavItem onClick={() => onViewChange(AppRoute.SETTINGS)} icon={Library} label="Library" active={currentView === AppRoute.SETTINGS} />
-        <NavItem onClick={() => onViewChange(AppRoute.FAVORITES)} icon={Heart} label="Collection" active={currentView === AppRoute.FAVORITES} />
+        <NavItem onClick={() => onViewChange(AppRoute.FAVORITES)} icon={Heart} label="Favorites" active={currentView === AppRoute.FAVORITES} />
       </div>
 
       <div className="flex flex-col gap-1">

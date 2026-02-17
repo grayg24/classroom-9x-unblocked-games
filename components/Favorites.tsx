@@ -22,7 +22,7 @@ const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorit
         </div>
         <div>
           <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-            Personal <span className="text-pink-500">Vault</span>
+            My <span className="text-pink-500">Favorites</span>
           </h1>
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">High-Priority Operations Only</p>
         </div>

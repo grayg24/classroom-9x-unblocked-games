@@ -22,7 +22,7 @@ const Library: React.FC<LibraryProps> = ({ games, favorites, onToggleFavorite, o
           </div>
           <div>
             <h1 className="font-orbitron font-black text-4xl uppercase italic tracking-tighter">
-              Main <span className="text-cyan-400">Archive</span>
+              Games <span className="text-cyan-400">Library</span>
             </h1>
             <p className="text-slate-500 text-sm mt-1 uppercase font-black tracking-widest">Complete Intel Database</p>
           </div>
