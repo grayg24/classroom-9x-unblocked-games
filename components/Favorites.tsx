@@ -33,9 +33,9 @@ const Favorites: React.FC<FavoritesProps> = ({ games, favorites, onToggleFavorit
           <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6">
             <Ghost className="text-slate-600" size={40} />
           </div>
-          <h3 className="text-xl font-bold text-slate-400 mb-2 font-orbitron uppercase">Vault Empty</h3>
+          <h3 className="text-xl font-bold text-slate-400 mb-2 font-orbitron uppercase">Favorites Empty</h3>
           <p className="text-slate-600 text-center max-w-xs mb-8 text-xs font-bold uppercase tracking-wide">
-            Add units to your vault by engaging the heart icon on game files.
+            Add games to your favorites by engaging the heart icon on game files.
           </p>
         </div>
       ) : (

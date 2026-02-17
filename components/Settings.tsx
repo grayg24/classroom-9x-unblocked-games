@@ -159,7 +159,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onUpdateSettings, onSetTheme,
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="ENTER CODE..."
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 font-orbitron text-xs text-theme focus:outline-none focus:border-theme/50 transition-all placeholder:text-slate-700"
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 font-orbitron text-xs text-theme focus:outline-none focus-shadow-theme transition-all placeholder:text-slate-700"
                    />
                    <button 
                     type="submit"

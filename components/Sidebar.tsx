@@ -6,12 +6,13 @@ import { AppRoute, User } from '../types';
 
 interface SidebarProps {
   currentView: AppRoute;
+  selectedCategoryId: string | null;
   user: User;
   onSetTheme: (theme: string) => void;
   onViewChange: (view: AppRoute, param?: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onViewChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user, onSetTheme, onViewChange }) => {
   const NavItem = ({ onClick, icon: Icon, label, active }: { onClick: () => void, icon: any, label: string, active: boolean }) => (
     <button 
       onClick={onClick}
@@ -41,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
   return (
     <div className="p-4 flex flex-col gap-8 h-full">
       <div className="flex flex-col gap-1">
-        <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4">Tactical Hub</p>
+        <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4">Menu</p>
         <NavItem onClick={() => onViewChange(AppRoute.HOME)} icon={Home} label="Home Page" active={currentView === AppRoute.HOME} />
         <NavItem onClick={() => onViewChange(AppRoute.LIBRARY)} icon={Library} label="Library" active={currentView === AppRoute.LIBRARY} />
         <NavItem onClick={() => onViewChange(AppRoute.FAVORITES)} icon={Heart} label="Favorites" active={currentView === AppRoute.FAVORITES} />
@@ -49,24 +50,28 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
 
       <div className="flex flex-col gap-1">
         <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4">Categories</p>
-        {CATEGORIES.map(cat => (
-          <button 
-            key={cat.id}
-            onClick={() => onViewChange(AppRoute.CATEGORY, cat.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-              currentView === AppRoute.CATEGORY && (cat.id as any) === (cat.id)
-                ? 'bg-[var(--primary)]/10 text-theme' 
-                : 'text-slate-400 hover:bg-slate-900 hover:text-white'
-            }`}
-            onMouseEnter={() => (window as any).setCursorActive?.(true)}
-            onMouseLeave={() => (window as any).setCursorActive?.(false)}
-          >
-            <span className="group-hover:text-theme shrink-0">
-              {getIcon(cat.icon, 18)}
-            </span>
-            <span className="font-bold text-sm tracking-tight">{cat.name}</span>
-          </button>
-        ))}
+        {CATEGORIES.map(cat => {
+          const isActive = currentView === AppRoute.CATEGORY && selectedCategoryId === cat.id;
+          return (
+            <button 
+              key={cat.id}
+              onClick={() => onViewChange(AppRoute.CATEGORY, cat.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                isActive
+                  ? 'bg-[var(--primary)]/10 text-theme' 
+                  : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+              }`}
+              onMouseEnter={() => (window as any).setCursorActive?.(true)}
+              onMouseLeave={() => (window as any).setCursorActive?.(false)}
+            >
+              <span className={`${isActive ? 'text-theme' : 'group-hover:text-theme'} shrink-0 transition-colors`}>
+                {getIcon(cat.icon, 18)}
+              </span>
+              <span className="font-bold text-sm tracking-tight">{cat.name}</span>
+              {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-theme shadow-theme"></div>}
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -89,6 +94,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, user, onSetTheme, onView
                   isActive ? 'border-white scale-110' : 'border-slate-800'
                 } ${isLocked ? 'bg-slate-900/50 cursor-not-allowed border-slate-900' : 'hover:scale-110 active:scale-95'}`}
                 style={isActive && !isLocked ? { boxShadow: `0 0 15px ${t.id === 'rainbow' ? '#ffffff' : t.color}66` } : {}}
+                onMouseEnter={() => !isLocked && (window as any).setCursorActive?.(true)}
+                onMouseLeave={() => !isLocked && (window as any).setCursorActive?.(false)}
               >
                  {isLocked ? (
                    <div className="flex flex-col items-center justify-center gap-0.5 text-slate-500">

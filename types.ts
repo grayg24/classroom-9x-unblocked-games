@@ -17,6 +17,7 @@ export interface Category {
 
 export interface UserSettings {
   customCursor: boolean;
+  cursorStyle: 'default' | 'amongus';
   animatedBg: boolean;
   volumetricFog: boolean;
 }

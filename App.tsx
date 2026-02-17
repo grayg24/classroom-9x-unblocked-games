@@ -22,6 +22,7 @@ const DEFAULT_USER: User = {
   favorites: [],
   settings: {
     customCursor: true,
+    cursorStyle: 'default',
     animatedBg: true,
     volumetricFog: false
   }
@@ -35,24 +36,31 @@ const App: React.FC = () => {
   const [activeGame, setActiveGame] = useState<Game | null>(null);
 
   useEffect(() => {
-    const savedStats = localStorage.getItem('classroom9x_local_profile_v2');
+    const savedStats = localStorage.getItem('classroom9x_local_profile_v3');
     if (savedStats) {
       setUser(JSON.parse(savedStats));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('classroom9x_local_profile_v2', JSON.stringify(user));
+    localStorage.setItem('classroom9x_local_profile_v3', JSON.stringify(user));
     
     // Sync themes and global settings to DOM
     const body = document.getElementById('app-body');
     if (body) {
       body.setAttribute('data-theme', user.currentTheme);
       
-      if (user.settings.customCursor) {
+      // Disable custom cursor if game is active to allow normal interaction inside iframe
+      if (user.settings.customCursor && !activeGame) {
         body.classList.add('custom-cursor-enabled');
       } else {
         body.classList.remove('custom-cursor-enabled');
+      }
+
+      if (user.settings.cursorStyle === 'amongus' && !activeGame) {
+        body.classList.add('cursor-amongus');
+      } else {
+        body.classList.remove('cursor-amongus');
       }
 
       if (user.settings.animatedBg) {
@@ -67,7 +75,7 @@ const App: React.FC = () => {
         body.classList.remove('volumetric-fog-enabled');
       }
     }
-  }, [user]);
+  }, [user, activeGame]);
 
   const addExp = () => {
     const newExp = user.exp + EXP_PER_PLAY;
@@ -99,8 +107,8 @@ const App: React.FC = () => {
   };
 
   const redeemCode = (code: string) => {
-    const cleanCode = code.trim();
-    if (cleanCode === '9xIsBack') {
+    const cleanCode = code.trim().toLowerCase();
+    if (cleanCode === '9xisback') {
       const allThemes = ['cyan', 'rose', 'emerald', 'amber', 'violet'];
       setUser(prev => ({
         ...prev,
@@ -116,6 +124,14 @@ const App: React.FC = () => {
         unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'rainbow']))
       }));
       return { success: true, message: 'MATRIX RGB THEME UNLOCKED' };
+    }
+
+    if (cleanCode === 'amogus') {
+      setUser(prev => ({
+        ...prev,
+        settings: { ...prev.settings, cursorStyle: 'amongus', customCursor: true }
+      }));
+      return { success: true, message: 'CREWMATE PROTOCOL ACTIVATED' };
     }
 
     return { success: false, message: 'INVALID DECRYPTION KEY' };
@@ -215,6 +231,7 @@ const App: React.FC = () => {
       onSearch={setSearchQuery} 
       onSetTheme={setTheme}
       currentView={currentView}
+      selectedCategoryId={selectedCategoryId}
       onViewChange={(view, param) => {
         setCurrentView(view);
         setSelectedCategoryId(param || null);

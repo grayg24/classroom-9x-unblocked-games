@@ -29,7 +29,7 @@ const Library: React.FC<LibraryProps> = ({ games, favorites, onToggleFavorite, o
         </div>
         <div className="hidden md:block text-right">
           <div className="text-2xl font-black text-white">{games.length}</div>
-          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Active Units</div>
+          <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Active Games</div>
         </div>
       </div>
 

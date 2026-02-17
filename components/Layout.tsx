@@ -9,11 +9,20 @@ interface LayoutProps {
   onSearch: (query: string) => void;
   onSetTheme: (theme: string) => void;
   currentView: AppRoute;
+  selectedCategoryId: string | null;
   onViewChange: (view: AppRoute, param?: string) => void;
   user: User;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, onSearch, onSetTheme, currentView, onViewChange, user }) => {
+const Layout: React.FC<LayoutProps> = ({ 
+  children, 
+  onSearch, 
+  onSetTheme, 
+  currentView, 
+  selectedCategoryId,
+  onViewChange, 
+  user 
+}) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar user={user} onSearch={onSearch} onLogoClick={() => onViewChange(AppRoute.HOME)} />
@@ -23,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onSearch, onSetTheme, current
           <Sidebar 
             user={user} 
             currentView={currentView} 
+            selectedCategoryId={selectedCategoryId}
             onSetTheme={onSetTheme} 
             onViewChange={onViewChange}
           />
