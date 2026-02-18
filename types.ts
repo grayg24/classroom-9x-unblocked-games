@@ -27,6 +27,7 @@ export interface User {
   password?: string;
   exp: number;
   level: number;
+  gamesPlayed: number;
   currentTheme: string;
   unlockedThemes: string[];
   unlockedCursors: CursorStyle[];

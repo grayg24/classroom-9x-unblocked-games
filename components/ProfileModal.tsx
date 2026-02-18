@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { User, CursorStyle } from '../types';
-import { X, Edit2, Shield, User as UserIcon, Trophy, Star, Zap, Palette, Lock, MousePointer2, Sparkles, Stars, Check } from 'lucide-react';
+import { User, CursorStyle } from '../types.ts';
+import { X, Edit2, Shield, User as UserIcon, Trophy, Gamepad2, Zap, Palette, Lock, MousePointer2, Sparkles, Stars, Check } from 'lucide-react';
 
 interface ProfileModalProps {
   user: User;
@@ -72,7 +72,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onUpdateUser, onUpdat
         </div>
 
         <div className="p-8 space-y-10 overflow-y-auto">
-          {/* Top Row: Identity & Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <section className="space-y-4">
               <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Profile</p>
@@ -91,25 +90,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onUpdateUser, onUpdat
                         onKeyDown={handleKeyDown}
                         className="bg-slate-800 border border-theme rounded-xl px-4 py-2 text-white font-orbitron text-sm focus:outline-none w-full shadow-theme" 
                       />
-                      <button 
-                        onClick={handleSave} 
-                        className="p-2 bg-theme text-slate-950 rounded-xl transition-transform hover:scale-105 active:scale-95"
-                      >
-                        <Check size={18} />
-                      </button>
+                      <button onClick={handleSave} className="p-2 bg-theme text-slate-950 rounded-xl"><Check size={18} /></button>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between group">
                       <div className="min-w-0">
                         <h3 className="font-orbitron font-bold text-white text-lg truncate leading-none mb-1">{user.username}</h3>
-                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">LVL {user.level} Player</div>
+                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">LVL {user.level} Operative</div>
                       </div>
-                      <button 
-                        onClick={() => setIsEditing(true)} 
-                        className="p-2 bg-slate-800 text-slate-500 hover:text-theme hover:bg-theme/10 rounded-xl transition-all"
-                      >
-                        <Edit2 size={16} />
-                      </button>
+                      <button onClick={() => setIsEditing(true)} className="p-2 bg-slate-800 text-slate-500 hover:text-theme hover:bg-theme/10 rounded-xl"><Edit2 size={16} /></button>
                     </div>
                   )}
                 </div>
@@ -127,110 +116,35 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onUpdateUser, onUpdat
                 </div>
                 <div className="p-4 bg-slate-800/40 border border-white/5 rounded-3xl">
                   <div className="flex items-center gap-2 text-theme mb-1">
-                    <Zap size={12} /><span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Prestige</span>
+                    <Gamepad2 size={12} /><span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Played</span>
                   </div>
-                  <div className="text-xl font-orbitron font-black text-white">#{Math.floor(user.level / 2) + 1}</div>
+                  <div className="text-xl font-orbitron font-black text-white">{user.gamesPlayed || 0}</div>
                 </div>
               </div>
             </section>
           </div>
 
-          {/* Theme Selection Section */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-2">
-                <Palette size={12} className="text-theme" /> Themes
-              </p>
-              <span className="text-[9px] font-black text-slate-500 uppercase">LVL UP to unlock more</span>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-2"><Palette size={12} className="text-theme" /> Themes</p>
             </div>
-            
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               {themeOptions.map((t) => {
                 const isUnlocked = user.level >= t.level || user.unlockedThemes.includes(t.id);
                 const isActive = user.currentTheme === t.id;
-                
                 return (
-                  <button 
-                    key={t.id} 
-                    disabled={!isUnlocked} 
-                    onClick={() => onSetTheme(t.id)} 
-                    className={`group relative aspect-square rounded-2xl border-2 transition-all flex flex-col items-center justify-center overflow-hidden ${
-                      isActive 
-                        ? 'border-white scale-105 shadow-theme' 
-                        : 'border-slate-800 bg-slate-900/40 hover:border-theme/40'
-                    } ${!isUnlocked ? 'opacity-40 grayscale-[0.8] cursor-not-allowed' : 'active:scale-95'}`}
-                  >
-                    <div 
-                      className={`absolute inset-0 transition-opacity opacity-80 group-hover:opacity-100 ${t.special === 'shine' ? 'effect-shine' : ''} ${t.special === 'matrix' ? 'bg-[length:300%_300%] animate-[move-gradient_3s_linear_infinite]' : ''}`} 
-                      style={{ 
-                        background: t.color,
-                      }} 
-                    />
-
+                  <button key={t.id} disabled={!isUnlocked} onClick={() => onSetTheme(t.id)} className={`group relative aspect-square rounded-2xl border-2 transition-all flex flex-col items-center justify-center overflow-hidden ${isActive ? 'border-white scale-105 shadow-theme' : 'border-slate-800 bg-slate-900/40 hover:border-theme/40'} ${!isUnlocked ? 'opacity-40 grayscale-[0.8] cursor-not-allowed' : 'active:scale-95'}`}>
+                    <div className={`absolute inset-0 transition-opacity opacity-80 group-hover:opacity-100 ${t.special === 'shine' ? 'effect-shine' : ''}`} style={{ background: t.color }} />
                     {!isUnlocked ? (
-                      <div className="relative z-10 flex flex-col items-center gap-1">
-                        <Lock size={14} className="text-slate-400" />
-                        <span className="text-[8px] font-black text-white bg-black/60 px-2 py-0.5 rounded-full">LVL {t.level === 999 ? '???' : t.level}</span>
-                      </div>
+                      <div className="relative z-10 flex flex-col items-center gap-1"><Lock size={14} className="text-slate-400" /><span className="text-[8px] font-black text-white bg-black/60 px-2 py-0.5 rounded-full">LVL {t.level}</span></div>
                     ) : (
-                      <div className="relative z-10 text-center">
-                        {t.id === 'galaxy' && <Stars size={12} className="mx-auto mb-1 text-white" />}
-                        {t.id === 'gold' && <Sparkles size={12} className="mx-auto mb-1 text-white animate-pulse" />}
-                        {t.id === 'rainbow' && <Zap size={12} className="mx-auto mb-1 text-white animate-bounce" />}
-                        <span className="text-[9px] font-black text-white uppercase tracking-widest block leading-tight">{t.label}</span>
-                      </div>
+                      <div className="relative z-10 text-center"><span className="text-[9px] font-black text-white uppercase tracking-widest block leading-tight">{t.label}</span></div>
                     )}
                   </button>
                 );
               })}
             </div>
           </section>
-
-          {/* Cursor Selection Section */}
-          <section className="space-y-4">
-            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-2">
-              <MousePointer2 size={12} className="text-theme" /> Cursors
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {cursorOptions.map((c) => {
-                const isSecret = c.id === 'amongus' || c.id === 'star';
-                const isUnlocked = isSecret ? user.unlockedCursors.includes(c.id) : user.level >= c.level;
-                const isActive = user.settings.cursorStyle === c.id;
-                
-                if (isSecret && !isUnlocked) return null;
-
-                return (
-                  <button 
-                    key={c.id} 
-                    disabled={!isUnlocked} 
-                    onClick={() => onUpdateSettings({ cursorStyle: c.id })}
-                    className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 relative ${
-                      isActive 
-                        ? 'border-white bg-white/5' 
-                        : 'border-slate-800 bg-slate-950/30'
-                    } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'hover:border-theme/40 active:scale-95'}`}
-                  >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-theme text-slate-950 shadow-theme' : 'bg-slate-800 text-slate-500'}`}>
-                      <MousePointer2 size={16} />
-                    </div>
-                    <div className="text-center">
-                      <div className="text-[8px] font-black uppercase text-white tracking-widest truncate">{c.label}</div>
-                      {!isUnlocked && <div className="text-[7px] font-black text-theme mt-0.5">LVL {c.level}</div>}
-                    </div>
-                    {!isUnlocked && <Lock size={10} className="absolute top-1 right-1 text-slate-600" />}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        </div>
-
-        <div className="px-8 py-5 bg-slate-950/50 border-t border-white/5 flex items-center justify-between shrink-0">
-           <p className="text-[8px] font-bold text-slate-600 uppercase tracking-[0.3em]">Authorized Customization Interface</p>
-           <div className="flex items-center gap-2">
-              <div className={`w-1.5 h-1.5 rounded-full ${user.level >= 50 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-slate-700'}`}></div>
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Protocol Sync: Ready</span>
-           </div>
         </div>
       </div>
     </div>

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { AppRoute, Game, User, CursorStyle } from './types';
-import { GAMES_DATA } from './constants';
-import Layout from './components/Layout';
-import Home from './components/Home';
-import GameModal from './components/GameModal';
-import ProfileModal from './components/ProfileModal';
-import CategoryPage from './components/CategoryPage';
-import Favorites from './components/Favorites';
-import Library from './components/Library';
-import Settings from './components/Settings';
+import { AppRoute, Game, User, CursorStyle } from './types.ts';
+import { GAMES_DATA } from './constants.tsx';
+import Layout from './components/Layout.tsx';
+import Home from './components/Home.tsx';
+import GameModal from './components/GameModal.tsx';
+import ProfileModal from './components/ProfileModal.tsx';
+import CategoryPage from './components/CategoryPage.tsx';
+import Favorites from './components/Favorites.tsx';
+import Library from './components/Library.tsx';
+import Settings from './components/Settings.tsx';
 
 const EXP_PER_PLAY = 25;
 const LEVEL_UP_BASE = 200;
@@ -17,6 +17,7 @@ const DEFAULT_USER: User = {
   username: 'Player',
   exp: 0,
   level: 1,
+  gamesPlayed: 0,
   currentTheme: 'cyan',
   unlockedThemes: ['cyan'],
   unlockedCursors: ['default'],
@@ -39,7 +40,12 @@ const App: React.FC = () => {
   useEffect(() => {
     const savedStats = localStorage.getItem('classroom9x_local_profile_v4');
     if (savedStats) {
-      setUser(JSON.parse(savedStats));
+      try {
+        const parsed = JSON.parse(savedStats);
+        setUser({ ...DEFAULT_USER, ...parsed });
+      } catch (e) {
+        console.error("Failed to load profile", e);
+      }
     }
   }, []);
 
@@ -68,42 +74,39 @@ const App: React.FC = () => {
     }
   }, [user, activeGame]);
 
-  const addExp = () => {
-    const newExp = user.exp + EXP_PER_PLAY;
-    const requiredForNext = user.level * LEVEL_UP_BASE;
-    
-    let newLevel = user.level;
-    let unlockedThemes = [...user.unlockedThemes];
-    
-    if (newExp >= requiredForNext) {
-      newLevel += 1;
-      const themeUnlocks: { [lvl: number]: string } = {
-        5: 'rose',
-        10: 'emerald',
-        15: 'violet',
-        20: 'cobalt',
-        40: 'crimson',
-        75: 'gold',
-        100: 'galaxy'
-      };
-
-      if (themeUnlocks[newLevel] && !unlockedThemes.includes(themeUnlocks[newLevel])) {
-        unlockedThemes.push(themeUnlocks[newLevel]);
+  const addExpAndTrackPlay = () => {
+    setUser(prev => {
+      const newExp = prev.exp + EXP_PER_PLAY;
+      const requiredForNext = prev.level * LEVEL_UP_BASE;
+      const newGamesPlayed = (prev.gamesPlayed || 0) + 1;
+      
+      let newLevel = prev.level;
+      let unlockedThemes = [...prev.unlockedThemes];
+      
+      if (newExp >= requiredForNext) {
+        newLevel += 1;
+        const themeUnlocks: { [lvl: number]: string } = {
+          5: 'rose', 10: 'emerald', 15: 'violet', 20: 'cobalt', 40: 'crimson', 75: 'gold', 100: 'galaxy'
+        };
+        if (themeUnlocks[newLevel] && !unlockedThemes.includes(themeUnlocks[newLevel])) {
+          unlockedThemes.push(themeUnlocks[newLevel]);
+        }
       }
-    }
 
-    setUser({ ...user, exp: newExp, level: newLevel, unlockedThemes });
+      return { 
+        ...prev, 
+        exp: newExp, 
+        level: newLevel, 
+        unlockedThemes,
+        gamesPlayed: newGamesPlayed 
+      };
+    });
   };
 
-  const setTheme = (theme: string) => {
-    setUser({ ...user, currentTheme: theme });
-  };
+  const setTheme = (theme: string) => setUser({ ...user, currentTheme: theme });
 
   const updateSettings = (settings: Partial<User['settings']>) => {
-    setUser(prev => ({
-      ...prev,
-      settings: { ...prev.settings, ...settings }
-    }));
+    setUser(prev => ({ ...prev, settings: { ...prev.settings, ...settings } }));
   };
 
   const redeemCode = (code: string) => {
@@ -117,33 +120,6 @@ const App: React.FC = () => {
       }));
       return { success: true, message: 'OPERATIVE CLEARANCE GRANTED: +100 LEVELS' };
     }
-    
-    if (cleanCode === 'rainbow') {
-      setUser(prev => ({
-        ...prev,
-        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'rainbow']))
-      }));
-      return { success: true, message: 'MATRIX RGB THEME UNLOCKED' };
-    }
-
-    if (cleanCode === 'amogus') {
-      setUser(prev => ({
-        ...prev,
-        unlockedCursors: Array.from(new Set([...prev.unlockedCursors, 'amongus'])),
-        settings: { ...prev.settings, cursorStyle: 'amongus', customCursor: true }
-      }));
-      return { success: true, message: 'CREWMATE PROTOCOL ACTIVATED' };
-    }
-
-    if (cleanCode === 'star') {
-      setUser(prev => ({
-        ...prev,
-        unlockedCursors: Array.from(new Set([...prev.unlockedCursors, 'star'])),
-        settings: { ...prev.settings, cursorStyle: 'star', customCursor: true }
-      }));
-      return { success: true, message: 'CELESTIAL CURSOR UNLOCKED' };
-    }
-
     return { success: false, message: 'INVALID DECRYPTION KEY' };
   };
 
@@ -156,7 +132,7 @@ const App: React.FC = () => {
 
   const handleGameSelect = (game: Game) => {
     setActiveGame(game);
-    addExp();
+    addExpAndTrackPlay();
   };
 
   const filteredGames = useMemo(() => {
@@ -168,29 +144,13 @@ const App: React.FC = () => {
   }, [searchQuery]);
 
   const renderContent = () => {
-    if (searchQuery) {
-      return (
-        <Library 
-          games={filteredGames} 
-          favorites={user.favorites} 
-          onToggleFavorite={toggleFavorite} 
-          onPlayGame={handleGameSelect}
-        />
-      );
-    }
-
+    if (searchQuery) return <Library games={filteredGames} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
     switch (currentView) {
-      case AppRoute.CATEGORY:
-        return <CategoryPage categoryId={selectedCategoryId || ''} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
-      case AppRoute.FAVORITES:
-        return <Favorites games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
-      case AppRoute.LIBRARY:
-        return <Library games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
-      case AppRoute.SETTINGS:
-        return <Settings user={user} onUpdateSettings={updateSettings} onSetTheme={setTheme} onRedeemCode={redeemCode} />;
-      case AppRoute.HOME:
-      default:
-        return <Home user={user} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} onSwitchToLibrary={() => setCurrentView(AppRoute.LIBRARY)} />;
+      case AppRoute.CATEGORY: return <CategoryPage categoryId={selectedCategoryId || ''} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
+      case AppRoute.FAVORITES: return <Favorites games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
+      case AppRoute.LIBRARY: return <Library games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
+      case AppRoute.SETTINGS: return <Settings user={user} onUpdateSettings={updateSettings} onSetTheme={setTheme} onRedeemCode={redeemCode} />;
+      default: return <Home user={user} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} onSwitchToLibrary={() => setCurrentView(AppRoute.LIBRARY)} />;
     }
   };
 
@@ -209,25 +169,8 @@ const App: React.FC = () => {
       onProfileClick={() => setIsProfileModalOpen(true)}
     >
       {renderContent()}
-
-      {activeGame && (
-        <GameModal 
-          game={activeGame} 
-          isFavorite={user.favorites.includes(activeGame.id)}
-          onToggleFavorite={toggleFavorite}
-          onClose={() => setActiveGame(null)}
-        />
-      )}
-
-      {isProfileModalOpen && (
-        <ProfileModal 
-          user={user}
-          onUpdateUser={(updates) => setUser(prev => ({ ...prev, ...updates }))}
-          onUpdateSettings={updateSettings}
-          onSetTheme={setTheme}
-          onClose={() => setIsProfileModalOpen(false)}
-        />
-      )}
+      {activeGame && <GameModal game={activeGame} isFavorite={user.favorites.includes(activeGame.id)} onToggleFavorite={toggleFavorite} onClose={() => setActiveGame(null)} />}
+      {isProfileModalOpen && <ProfileModal user={user} onUpdateUser={(updates) => setUser(prev => ({ ...prev, ...updates }))} onUpdateSettings={updateSettings} onSetTheme={setTheme} onClose={() => setIsProfileModalOpen(false)} />}
     </Layout>
   );
 };
