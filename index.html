@@ -228,7 +228,7 @@
             left: -100px; top: -100px;
             display: none;
             box-shadow: 0 0 20px var(--primary);
-            transition: background-color 0.3s ease, transform 0.1s ease-out, border-radius 0.2s ease, width 0.2s ease, height 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease-out, border-radius 0.2s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
         }
 
         body.custom-cursor-enabled .glow-cursor { display: block; }
@@ -244,7 +244,7 @@
             opacity: 0.3;
             left: -100px; top: -100px;
             display: none;
-            transition: border-color 0.3s ease, transform 0.15s ease-out;
+            transition: border-color 0.3s ease, transform 0.15s ease-out, opacity 0.2s ease;
         }
 
         body.custom-cursor-enabled .glow-cursor-follower { display: block; }
@@ -305,6 +305,18 @@
             if (!document.body.classList.contains('custom-cursor-enabled')) return;
             document.documentElement.style.setProperty('--cursor-scale', '1');
             cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+
+        // Hide cursor when exiting the browser window
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+            follower.style.opacity = '0';
+        });
+
+        // Show cursor when entering the browser window
+        document.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '1';
+            follower.style.opacity = '1';
         });
 
         window.setCursorActive = (active) => {
