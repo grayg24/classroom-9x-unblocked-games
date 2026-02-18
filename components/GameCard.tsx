@@ -11,15 +11,8 @@ interface GameCardProps {
 }
 
 const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite, onPlay }) => {
-  const handleMouseEnter = () => (window as any).setCursorActive(true);
-  const handleMouseLeave = () => (window as any).setCursorActive(false);
-
   return (
-    <div 
-      className="card-perspective group"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="card-perspective group">
       <div className="relative bg-slate-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-800 group-hover:border-[var(--primary)]/50 transition-all duration-500 transform group-hover:-translate-y-3 group-hover:shadow-[0_20px_50px_var(--primary-glow)]">
         
         <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[var(--primary)]/0 group-hover:border-[var(--primary)]/60 transition-all duration-500 rounded-tr-2xl"></div>

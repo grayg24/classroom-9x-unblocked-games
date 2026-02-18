@@ -11,6 +11,7 @@ interface LayoutProps {
   currentView: AppRoute;
   selectedCategoryId: string | null;
   onViewChange: (view: AppRoute, param?: string) => void;
+  onProfileClick: () => void;
   user: User;
 }
 
@@ -21,6 +22,7 @@ const Layout: React.FC<LayoutProps> = ({
   currentView, 
   selectedCategoryId,
   onViewChange, 
+  onProfileClick,
   user 
 }) => {
   return (
@@ -35,6 +37,7 @@ const Layout: React.FC<LayoutProps> = ({
             selectedCategoryId={selectedCategoryId}
             onSetTheme={onSetTheme} 
             onViewChange={onViewChange}
+            onProfileClick={onProfileClick}
           />
         </div>
         

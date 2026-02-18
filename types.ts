@@ -1,4 +1,3 @@
-
 export interface Game {
   id: string;
   title: string;
@@ -15,11 +14,12 @@ export interface Category {
   icon: string;
 }
 
+export type CursorStyle = 'default' | 'amongus' | 'star' | 'crosshair' | 'sword' | 'neon' | 'ring';
+
 export interface UserSettings {
   customCursor: boolean;
-  cursorStyle: 'default' | 'amongus';
+  cursorStyle: CursorStyle;
   animatedBg: boolean;
-  volumetricFog: boolean;
 }
 
 export interface User {
@@ -29,6 +29,7 @@ export interface User {
   level: number;
   currentTheme: string;
   unlockedThemes: string[];
+  unlockedCursors: CursorStyle[];
   favorites: string[];
   settings: UserSettings;
 }

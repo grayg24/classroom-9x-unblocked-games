@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Game } from '../types';
+import { Game, User } from '../types';
 import GameCard from './GameCard';
 import { Sparkles, Zap, Flame, ChevronRight } from 'lucide-react';
 
 interface HomeProps {
+  user: User;
   games: Game[];
   favorites: string[];
   onToggleFavorite: (id: string) => void;
@@ -12,7 +13,7 @@ interface HomeProps {
   onSwitchToLibrary: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayGame, onSwitchToLibrary }) => {
+const Home: React.FC<HomeProps> = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchToLibrary }) => {
   const featuredGames = games.filter(g => g.isFeatured);
   const otherGames = games.filter(g => !g.isFeatured).slice(0, 4);
 
@@ -20,40 +21,43 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
     <div className="space-y-20 pb-20 animate-in fade-in duration-1000">
       
       {/* Hero Section */}
-      <section className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl group">
-        <div className="absolute inset-0 bg-slate-900">
+      <section className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl group bg-slate-950">
+        <div className="absolute inset-0">
           <img 
             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop" 
-            className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-1000"
+            className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-1000"
             alt="Hero Background"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+          {/* Dense Gradient Overlay to blend image into the solid block */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent"></div>
         </div>
         
-        <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 max-w-3xl space-y-6">
+        {/* Content Area - Fully Opaque Solid Block with heavy shadow for separation */}
+        <div className="absolute inset-y-0 left-0 flex flex-col justify-center px-10 md:px-20 w-full md:w-3/5 lg:w-1/2 space-y-6 z-10 bg-slate-950 shadow-[60px_0_100px_rgba(2,6,23,1)]">
           <div className="flex items-center gap-2 text-theme font-bold uppercase tracking-[0.3em] text-xs">
             <Zap size={14} className="fill-current" />
-            Unblocked Games
+            Unblocked Games Portal
           </div>
-          <h1 className="font-orbitron font-black text-5xl md:text-7xl italic leading-none text-white tracking-tighter">
-            NEXT GEN <br/><span className="text-theme drop-shadow-theme">GAMING</span>
+          <h1 className="font-orbitron font-black text-5xl md:text-7xl italic leading-none text-white tracking-tighter uppercase">
+            WELCOME <br/><span className="text-theme drop-shadow-theme">{user.username}</span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-md">
-            The fastest unblocked library on the web. Experience lag-free browser gaming with Classroom 9x Reworked.
+          <p className="text-slate-300 text-lg max-w-md font-medium">
+            The elite unblocked library for high-performance browser gaming. Zero lag, zero blocks, pure gaming.
           </p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 pt-2">
             <button 
               onClick={onSwitchToLibrary}
-              className="bg-theme text-slate-950 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-transform hover:scale-105 shadow-theme"
+              className="bg-theme text-slate-950 px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:brightness-110 shadow-theme"
             >
               Browse Library
             </button>
           </div>
         </div>
 
-        <div className="absolute bottom-10 right-10 hidden lg:flex flex-col items-end opacity-20">
-            <span className="font-orbitron font-black text-8xl leading-none">9X</span>
-            <span className="font-bold tracking-[0.5em] text-sm uppercase">Reworked</span>
+        {/* 9X Reworked Watermark - Now fully opaque */}
+        <div className="absolute bottom-10 right-10 hidden lg:flex flex-col items-end opacity-100 z-0">
+            <span className="font-orbitron font-black text-8xl leading-none text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">9X</span>
+            <span className="font-bold tracking-[0.5em] text-sm uppercase text-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">Reworked</span>
         </div>
       </section>
 
@@ -82,7 +86,7 @@ const Home: React.FC<HomeProps> = ({ games, favorites, onToggleFavorite, onPlayG
         </div>
       </section>
 
-      {/* Trending Row - Now Theme Aware */}
+      {/* Trending Row */}
       <section>
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-4">

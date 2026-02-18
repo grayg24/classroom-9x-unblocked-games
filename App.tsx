@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { AppRoute, Game, User } from './types';
+import { AppRoute, Game, User, CursorStyle } from './types';
 import { GAMES_DATA } from './constants';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import GameModal from './components/GameModal';
+import ProfileModal from './components/ProfileModal';
 import CategoryPage from './components/CategoryPage';
 import Favorites from './components/Favorites';
 import Library from './components/Library';
@@ -14,17 +14,17 @@ const EXP_PER_PLAY = 25;
 const LEVEL_UP_BASE = 200;
 
 const DEFAULT_USER: User = {
-  username: 'Local Operative',
+  username: 'Player',
   exp: 0,
   level: 1,
   currentTheme: 'cyan',
   unlockedThemes: ['cyan'],
+  unlockedCursors: ['default'],
   favorites: [],
   settings: {
     customCursor: true,
     cursorStyle: 'default',
-    animatedBg: true,
-    volumetricFog: false
+    animatedBg: true
   }
 };
 
@@ -34,45 +34,36 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User>(DEFAULT_USER);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   useEffect(() => {
-    const savedStats = localStorage.getItem('classroom9x_local_profile_v3');
+    const savedStats = localStorage.getItem('classroom9x_local_profile_v4');
     if (savedStats) {
       setUser(JSON.parse(savedStats));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('classroom9x_local_profile_v3', JSON.stringify(user));
+    localStorage.setItem('classroom9x_local_profile_v4', JSON.stringify(user));
     
-    // Sync themes and global settings to DOM
     const body = document.getElementById('app-body');
     if (body) {
       body.setAttribute('data-theme', user.currentTheme);
       
-      // Disable custom cursor if game is active to allow normal interaction inside iframe
+      const styles: CursorStyle[] = ['default', 'amongus', 'star', 'crosshair', 'sword', 'neon', 'ring'];
+      styles.forEach(s => body.classList.remove(`cursor-${s}`));
+
       if (user.settings.customCursor && !activeGame) {
         body.classList.add('custom-cursor-enabled');
+        body.classList.add(`cursor-${user.settings.cursorStyle}`);
       } else {
         body.classList.remove('custom-cursor-enabled');
-      }
-
-      if (user.settings.cursorStyle === 'amongus' && !activeGame) {
-        body.classList.add('cursor-amongus');
-      } else {
-        body.classList.remove('cursor-amongus');
       }
 
       if (user.settings.animatedBg) {
         body.classList.add('animated-bg-enabled');
       } else {
         body.classList.remove('animated-bg-enabled');
-      }
-
-      if (user.settings.volumetricFog) {
-        body.classList.add('volumetric-fog-enabled');
-      } else {
-        body.classList.remove('volumetric-fog-enabled');
       }
     }
   }, [user, activeGame]);
@@ -82,17 +73,26 @@ const App: React.FC = () => {
     const requiredForNext = user.level * LEVEL_UP_BASE;
     
     let newLevel = user.level;
-    let unlocked = [...user.unlockedThemes];
+    let unlockedThemes = [...user.unlockedThemes];
     
     if (newExp >= requiredForNext) {
       newLevel += 1;
-      if (newLevel === 5 && !unlocked.includes('rose')) unlocked.push('rose');
-      if (newLevel === 10 && !unlocked.includes('emerald')) unlocked.push('emerald');
-      if (newLevel === 15 && !unlocked.includes('amber')) unlocked.push('amber');
-      if (newLevel === 20 && !unlocked.includes('violet')) unlocked.push('violet');
+      const themeUnlocks: { [lvl: number]: string } = {
+        5: 'rose',
+        10: 'emerald',
+        15: 'violet',
+        20: 'cobalt',
+        40: 'crimson',
+        75: 'gold',
+        100: 'galaxy'
+      };
+
+      if (themeUnlocks[newLevel] && !unlockedThemes.includes(themeUnlocks[newLevel])) {
+        unlockedThemes.push(themeUnlocks[newLevel]);
+      }
     }
 
-    setUser({ ...user, exp: newExp, level: newLevel, unlockedThemes: unlocked });
+    setUser({ ...user, exp: newExp, level: newLevel, unlockedThemes });
   };
 
   const setTheme = (theme: string) => {
@@ -109,7 +109,7 @@ const App: React.FC = () => {
   const redeemCode = (code: string) => {
     const cleanCode = code.trim().toLowerCase();
     if (cleanCode === '9xisback') {
-      const allThemes = ['cyan', 'rose', 'emerald', 'amber', 'violet'];
+      const allThemes = ['cyan', 'rose', 'emerald', 'violet', 'cobalt', 'crimson', 'gold', 'galaxy'];
       setUser(prev => ({
         ...prev,
         level: prev.level + 100,
@@ -129,9 +129,19 @@ const App: React.FC = () => {
     if (cleanCode === 'amogus') {
       setUser(prev => ({
         ...prev,
+        unlockedCursors: Array.from(new Set([...prev.unlockedCursors, 'amongus'])),
         settings: { ...prev.settings, cursorStyle: 'amongus', customCursor: true }
       }));
       return { success: true, message: 'CREWMATE PROTOCOL ACTIVATED' };
+    }
+
+    if (cleanCode === 'star') {
+      setUser(prev => ({
+        ...prev,
+        unlockedCursors: Array.from(new Set([...prev.unlockedCursors, 'star'])),
+        settings: { ...prev.settings, cursorStyle: 'star', customCursor: true }
+      }));
+      return { success: true, message: 'CELESTIAL CURSOR UNLOCKED' };
     }
 
     return { success: false, message: 'INVALID DECRYPTION KEY' };
@@ -171,57 +181,16 @@ const App: React.FC = () => {
 
     switch (currentView) {
       case AppRoute.CATEGORY:
-        return (
-          <CategoryPage 
-            categoryId={selectedCategoryId || ''} 
-            games={GAMES_DATA} 
-            favorites={user.favorites}
-            onToggleFavorite={toggleFavorite}
-            onPlayGame={handleGameSelect}
-          />
-        );
-
+        return <CategoryPage categoryId={selectedCategoryId || ''} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
       case AppRoute.FAVORITES:
-        return (
-          <Favorites 
-            games={GAMES_DATA} 
-            favorites={user.favorites} 
-            onToggleFavorite={toggleFavorite} 
-            onPlayGame={handleGameSelect}
-          />
-        );
-
+        return <Favorites games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
       case AppRoute.LIBRARY:
-        return (
-          <Library 
-            games={GAMES_DATA} 
-            favorites={user.favorites} 
-            onToggleFavorite={toggleFavorite} 
-            onPlayGame={handleGameSelect}
-          />
-        );
-
+        return <Library games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} />;
       case AppRoute.SETTINGS:
-        return (
-          <Settings 
-            user={user}
-            onUpdateSettings={updateSettings}
-            onSetTheme={setTheme}
-            onRedeemCode={redeemCode}
-          />
-        );
-
+        return <Settings user={user} onUpdateSettings={updateSettings} onSetTheme={setTheme} onRedeemCode={redeemCode} />;
       case AppRoute.HOME:
       default:
-        return (
-          <Home 
-            games={GAMES_DATA} 
-            favorites={user.favorites} 
-            onToggleFavorite={toggleFavorite} 
-            onPlayGame={handleGameSelect}
-            onSwitchToLibrary={() => setCurrentView(AppRoute.LIBRARY)}
-          />
-        );
+        return <Home user={user} games={GAMES_DATA} favorites={user.favorites} onToggleFavorite={toggleFavorite} onPlayGame={handleGameSelect} onSwitchToLibrary={() => setCurrentView(AppRoute.LIBRARY)} />;
     }
   };
 
@@ -237,6 +206,7 @@ const App: React.FC = () => {
         setSelectedCategoryId(param || null);
         setSearchQuery('');
       }}
+      onProfileClick={() => setIsProfileModalOpen(true)}
     >
       {renderContent()}
 
@@ -246,6 +216,16 @@ const App: React.FC = () => {
           isFavorite={user.favorites.includes(activeGame.id)}
           onToggleFavorite={toggleFavorite}
           onClose={() => setActiveGame(null)}
+        />
+      )}
+
+      {isProfileModalOpen && (
+        <ProfileModal 
+          user={user}
+          onUpdateUser={(updates) => setUser(prev => ({ ...prev, ...updates }))}
+          onUpdateSettings={updateSettings}
+          onSetTheme={setTheme}
+          onClose={() => setIsProfileModalOpen(false)}
         />
       )}
     </Layout>

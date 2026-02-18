@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User, UserSettings } from '../types';
 import { 
@@ -12,8 +11,7 @@ import {
   Activity,
   Lock,
   Terminal,
-  Key,
-  Wind
+  Key
 } from 'lucide-react';
 
 interface SettingsProps {
@@ -125,16 +123,6 @@ const Settings: React.FC<SettingsProps> = ({ user, onUpdateSettings, onSetTheme,
               onToggle={() => onUpdateSettings({ animatedBg: !user.settings.animatedBg })}
               icon={Layers}
             />
-
-            <Toggle 
-              title="Volumetric Fog"
-              description="Simulate particle depth using volumetric fog layers. Enhances atmosphere and immersion. Heavy GPU usage."
-              active={user.settings.volumetricFog}
-              onToggle={() => onUpdateSettings({ volumetricFog: !user.settings.volumetricFog })}
-              icon={Wind}
-              disabled={user.level < 25}
-              lockedLevel={25}
-            />
           </section>
 
           {/* Codes Section */}
@@ -159,7 +147,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onUpdateSettings, onSetTheme,
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="ENTER CODE..."
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 font-orbitron text-xs text-theme focus:outline-none focus-shadow-theme transition-all placeholder:text-slate-700"
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 font-orbitron text-xs text-theme focus:outline-none transition-all placeholder:text-slate-700 input-glow"
                    />
                    <button 
                     type="submit"
@@ -219,7 +207,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onUpdateSettings, onSetTheme,
                 <span className="font-orbitron font-bold text-[10px] uppercase tracking-widest">Profile Integrity</span>
              </div>
              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-               All local profile data is stored on-device. Leveling up grants access to restricted visual modules like Volumetric Fog.
+               All local profile data is stored on-device. Leveling up grants access to restricted visual modules.
              </p>
           </div>
         </div>

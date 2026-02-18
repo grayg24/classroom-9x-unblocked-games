@@ -10,12 +10,9 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user, onSearch, onLogoClick }) => {
-  const handleMouseEnter = () => (window as any).setCursorActive(true);
-  const handleMouseLeave = () => (window as any).setCursorActive(false);
-
   return (
     <nav className="fixed top-0 left-0 right-0 h-16 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800 z-[60] px-4 md:px-8 flex items-center justify-between">
-      <button onClick={onLogoClick} className="flex items-center gap-2 group" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <button onClick={onLogoClick} className="flex items-center gap-2 group">
         <div className="p-2 bg-[var(--primary)]/10 rounded-lg group-hover:bg-[var(--primary)]/20 transition-colors">
           <Rocket className="text-theme w-6 h-6" />
         </div>

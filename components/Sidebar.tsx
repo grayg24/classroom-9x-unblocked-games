@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CATEGORIES, getIcon } from '../constants';
-import { Home, Palette, Lock, Library, Heart, Settings as SettingsIcon } from 'lucide-react';
+import { Home, Library, Heart, Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
 import { AppRoute, User } from '../types';
 
 interface SidebarProps {
@@ -10,9 +10,10 @@ interface SidebarProps {
   user: User;
   onSetTheme: (theme: string) => void;
   onViewChange: (view: AppRoute, param?: string) => void;
+  onProfileClick: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user, onSetTheme, onViewChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user, onViewChange, onProfileClick }) => {
   const NavItem = ({ onClick, icon: Icon, label, active }: { onClick: () => void, icon: any, label: string, active: boolean }) => (
     <button 
       onClick={onClick}
@@ -21,23 +22,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user
           ? 'bg-[var(--primary)]/10 text-theme' 
           : 'text-slate-400 hover:bg-slate-900 hover:text-white'
       }`}
-      onMouseEnter={() => (window as any).setCursorActive?.(true)}
-      onMouseLeave={() => (window as any).setCursorActive?.(false)}
     >
       <Icon className={`w-5 h-5 ${active ? 'text-theme' : 'group-hover:text-theme'}`} />
       <span className="font-bold text-sm tracking-tight">{label}</span>
       {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-theme shadow-theme"></div>}
     </button>
   );
-
-  const themeOptions = [
-    { id: 'cyan', label: 'Default', level: 1, color: '#22d3ee' },
-    { id: 'rose', label: 'Neon Rose', level: 5, color: '#fb7185' },
-    { id: 'emerald', label: 'Emerald', level: 10, color: '#34d399' },
-    { id: 'amber', label: 'Amber', level: 15, color: '#fbbf24' },
-    { id: 'violet', label: 'Ethereal', level: 20, color: '#a78bfa' },
-    { id: 'rainbow', label: 'Matrix RGB', level: 999, color: 'linear-gradient(45deg, #ff0000, #ff00ff, #0000ff, #00ff00, #ffff00, #ff0000)' },
-  ];
 
   return (
     <div className="p-4 flex flex-col gap-8 h-full">
@@ -61,8 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user
                   ? 'bg-[var(--primary)]/10 text-theme' 
                   : 'text-slate-400 hover:bg-slate-900 hover:text-white'
               }`}
-              onMouseEnter={() => (window as any).setCursorActive?.(true)}
-              onMouseLeave={() => (window as any).setCursorActive?.(false)}
             >
               <span className={`${isActive ? 'text-theme' : 'group-hover:text-theme'} shrink-0 transition-colors`}>
                 {getIcon(cat.icon, 18)}
@@ -74,46 +62,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user
         })}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-          <Palette size={12} /> Appearance
-        </p>
-        <div className="grid grid-cols-6 gap-2 px-4">
-          {themeOptions.map((t) => {
-            const isUnlockedByCode = user.unlockedThemes.includes(t.id);
-            const isLocked = user.level < t.level && !isUnlockedByCode;
-            const isActive = user.currentTheme === t.id;
-            
-            return (
-              <button 
-                key={t.id}
-                disabled={isLocked}
-                onClick={() => onSetTheme(t.id)}
-                title={isLocked ? `Unlocks at LVL ${t.level}` : t.label}
-                className={`aspect-square rounded-lg border-2 transition-all flex items-center justify-center overflow-hidden ${
-                  isActive ? 'border-white scale-110' : 'border-slate-800'
-                } ${isLocked ? 'bg-slate-900/50 cursor-not-allowed border-slate-900' : 'hover:scale-110 active:scale-95'}`}
-                style={isActive && !isLocked ? { boxShadow: `0 0 15px ${t.id === 'rainbow' ? '#ffffff' : t.color}66` } : {}}
-                onMouseEnter={() => !isLocked && (window as any).setCursorActive?.(true)}
-                onMouseLeave={() => !isLocked && (window as any).setCursorActive?.(false)}
-              >
-                 {isLocked ? (
-                   <div className="flex flex-col items-center justify-center gap-0.5 text-slate-500">
-                     <Lock size={10} />
-                     <span className="text-[9px] font-black leading-none">{t.level === 999 ? '???' : t.level}</span>
-                   </div>
-                 ) : (
-                   <div 
-                    className={`w-full h-full opacity-90 hover:opacity-100 transition-opacity`} 
-                    style={{ background: t.color, backgroundColor: t.id === 'rainbow' ? 'transparent' : t.color }}
-                   />
-                 )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       <div className="mt-auto space-y-4">
         <NavItem 
           onClick={() => onViewChange(AppRoute.SETTINGS)} 
@@ -123,10 +71,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user
         />
 
         <div className="px-4 pb-4">
-          <div className="p-5 bg-slate-900/80 rounded-3xl border border-white/5 shadow-2xl relative overflow-hidden group">
+          <button 
+            onClick={onProfileClick}
+            className="w-full text-left p-5 bg-slate-900/80 rounded-3xl border border-white/5 shadow-2xl relative overflow-hidden group hover:border-theme/40 hover:-translate-y-2 hover:shadow-[0_20px_40px_var(--primary-glow)] transition-all active:scale-95 duration-500"
+          >
             <div className="absolute inset-0 bg-theme/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Levels</span>
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                <UserIcon size={12} className="text-theme" />
+                Profile
+              </span>
               <span className="text-[10px] font-black text-theme uppercase">LVL {user.level}</span>
             </div>
             <div className="space-y-2">
@@ -141,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, selectedCategoryId, user
                   ></div>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>
