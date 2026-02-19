@@ -15,14 +15,27 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
 
   const toggleFullscreen = () => {
     const iframe = document.getElementById('game-iframe-modal');
-    if (iframe) {
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) { /* Safari */
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) { /* IE11 */
-        iframe.msRequestFullscreen();
+    if (!iframe) return;
+
+    // Robust fullscreen request logic
+    const requestMethod = iframe.requestFullscreen || iframe.webkitRequestFullscreen || iframe.msRequestFullscreen || iframe.mozRequestFullScreen;
+    
+    if (requestMethod) {
+      const promise = requestMethod.call(iframe);
+      // Handling potential Permission errors (common in about:blank/restricted frames)
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch((err) => {
+          console.warn("Fullscreen on iframe failed, trying container fallback:", err);
+          const container = iframe.parentElement;
+          if (container && container.requestFullscreen) {
+            container.requestFullscreen();
+          }
+        });
       }
+    } else {
+      // Fallback for browsers that don't support requestFullscreen on iframe directly
+      const container = iframe.parentElement;
+      if (container && container.requestFullscreen) container.requestFullscreen();
     }
   };
 
@@ -39,7 +52,7 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
       alert('Pop-up blocked! Please allow pop-ups to use Cloak Mode.');
       return;
     }
-    win.document.title = 'Classes'; // Generic title
+    win.document.title = 'Classes'; // Stealth Title
     const style = win.document.createElement('style');
     style.innerHTML = `
       body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
@@ -48,7 +61,9 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
     win.document.head.appendChild(style);
     const iframe = win.document.createElement('iframe');
     iframe.src = game.iframeUrl;
-    iframe.allow = "fullscreen; autoplay; gamepad; keyboard-lock";
+    // Explicitly grant permissions for the cloaked tab
+    iframe.setAttribute('allow', 'fullscreen; autoplay; gamepad; keyboard-lock; microphone; camera');
+    iframe.setAttribute('allowfullscreen', 'true');
     win.document.body.appendChild(iframe);
   };
 
