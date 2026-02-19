@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import htm from 'htm';
-import { Maximize2, RotateCcw, Heart, Share2, Info, X, Loader2 } from 'lucide-react';
+import { Maximize2, RotateCcw, Heart, Share2, Info, X, Loader2, Ghost } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
@@ -15,7 +15,15 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
 
   const toggleFullscreen = () => {
     const iframe = document.getElementById('game-iframe-modal');
-    if (iframe && iframe.requestFullscreen) iframe.requestFullscreen();
+    if (iframe) {
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.webkitRequestFullscreen) { /* Safari */
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) { /* IE11 */
+        iframe.msRequestFullscreen();
+      }
+    }
   };
 
   const handleRefresh = () => {
@@ -23,6 +31,25 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
     if (iframe) iframe.src = iframe.src;
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1000);
+  };
+
+  const cloakGame = () => {
+    const win = window.open('about:blank', '_blank');
+    if (!win) {
+      alert('Pop-up blocked! Please allow pop-ups to use Cloak Mode.');
+      return;
+    }
+    win.document.title = 'Classes'; // Generic title
+    const style = win.document.createElement('style');
+    style.innerHTML = `
+      body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+      iframe { border: none; width: 100%; height: 100%; }
+    `;
+    win.document.head.appendChild(style);
+    const iframe = win.document.createElement('iframe');
+    iframe.src = game.iframeUrl;
+    iframe.allow = "fullscreen; autoplay; gamepad; keyboard-lock";
+    win.document.body.appendChild(iframe);
   };
 
   return html`
@@ -71,7 +98,9 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
                   src=${game.iframeUrl} 
                   className=${`w-full h-full border-none transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                   title=${game.title}
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                  allow="fullscreen; autoplay; gamepad; keyboard-lock"
+                  allowfullscreen="true"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen"
                 />
               </div>
 
@@ -89,6 +118,15 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
                    >
                      <${Heart} size=${16} className=${isFavorite ? 'fill-current' : ''} />
                      ${isFavorite ? 'Saved' : 'Save'}
+                   </button>
+                   <button 
+                    onClick=${cloakGame}
+                    className="flex items-center gap-2 px-4 py-3 bg-slate-800 text-cyan-400 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-cyan-500/10 transition-all border border-cyan-500/20"
+                    onMouseEnter=${() => window.setCursorActive && window.setCursorActive(true)}
+                    onMouseLeave=${() => window.setCursorActive && window.setCursorActive(false)}
+                   >
+                     <${Ghost} size=${14} />
+                     Cloak Tab
                    </button>
                    <button className="p-3 bg-slate-800 text-slate-300 rounded-xl transition-all hover:bg-slate-700">
                      <${Share2} size=${16} />
@@ -136,6 +174,10 @@ const GameModal = ({ game, isFavorite, onToggleFavorite, onClose }) => {
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                         Online
                       </span>
+                    </li>
+                    <li className="flex justify-between items-center text-slate-500">
+                      <span>Cloak Support</span>
+                      <span className="text-cyan-400">Ready</span>
                     </li>
                   </ul>
                 </div>
