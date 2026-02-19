@@ -4,8 +4,8 @@ import {
   X, Edit2, User as UserIcon, Trophy, Gamepad2, 
   Palette, Lock, Check, Zap, Award, Star, Activity, 
   ChevronRight, Brain, Target, Heart, Scan, Terminal,
-  Cpu, Flame, ShieldCheck, Cpu as ModuleIcon, Layout,
-  Eye, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff
+  Cpu, Flame, ShieldCheck, Layout,
+  Eye, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff, Bot
 } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
@@ -30,36 +30,36 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
   };
 
   const characterOptions = [
-    { id: 'agent-x', label: 'Default', level: 1, icon: UserIcon, desc: 'Basic Operative', color: 'text-slate-400' },
-    { id: 'viper', label: 'Viper', level: 15, icon: ZapIcon, desc: 'Speed Demon', color: 'text-emerald-400' },
-    { id: 'ghost', label: 'Ghost', level: 30, icon: Ghost, desc: 'Stealth Specialist', color: 'text-violet-400' },
-    { id: 'cyber-neko', label: 'Cyber Neko', level: 50, icon: Cat, desc: 'High-Tech Feline', color: 'text-rose-400' },
-    { id: 'overlord', label: 'Overlord', level: 100, icon: Crown, desc: 'Supreme Ruler', color: 'text-amber-400' },
-    { id: 'stark', label: 'Stark', level: 0, icon: Shield, desc: 'Iron Core', color: 'text-red-500', secret: true },
-    { id: 'glitch', label: 'Protocol Zero', level: 0, icon: ZapOff, desc: 'Error: Undefined', color: 'text-cyan-400', secret: true },
+    { id: 'agent-x', label: 'Default', level: 1, icon: UserIcon, desc: 'Basic Operative', color: 'text-slate-400', themeColor: '#94a3b8' },
+    { id: 'viper', label: 'Viper', level: 15, icon: ZapIcon, desc: 'Speed Demon', color: 'text-emerald-400', themeColor: '#34d399' },
+    { id: 'ghost', label: 'Ghost', level: 30, icon: Ghost, desc: 'Stealth Specialist', color: 'text-violet-400', themeColor: '#a78bfa' },
+    { id: 'cyber-neko', label: 'Cyber Neko', level: 50, icon: Cat, desc: 'High-Tech Feline', color: 'text-rose-400', themeColor: '#fb7185' },
+    { id: 'overlord', label: 'Overlord', level: 100, icon: Crown, desc: 'Supreme Ruler', color: 'text-amber-400', themeColor: '#fbbf24' },
+    { id: 'stark', label: 'Jarvis', level: 0, icon: Bot, desc: 'AI Interface', color: 'text-red-500', themeColor: '#ef4444', secret: true },
+    { id: 'glitch', label: 'Protocol Zero', level: 0, icon: ZapOff, desc: 'Error: Undefined', color: 'text-cyan-400', themeColor: '#22d3ee', secret: true },
   ];
 
   const themeOptions = [
-    { id: 'cyan', label: 'Cyan', level: 1, color: '#22d3ee', desc: 'Standard Uplink' },
-    { id: 'rose', label: 'Rose', level: 5, color: '#fb7185', desc: 'Enhanced Visuals' },
-    { id: 'emerald', label: 'Emerald', level: 10, color: '#34d399', desc: 'Tactical Overlay' },
-    { id: 'violet', label: 'Violet', level: 15, color: '#a78bfa', desc: 'Psionic Buffer' },
-    { id: 'cobalt', label: 'Cobalt', level: 20, color: '#3b82f6', desc: 'Deep Space Link' },
-    { id: 'crimson', label: 'Crimson', level: 40, color: '#dc2626', desc: 'Overclocked Mode' },
-    { id: 'gold', label: 'Gold', level: 75, color: '#facc15', desc: 'Legendary Status', special: 'shine' },
-    { id: 'galaxy', label: 'Galaxy', level: 100, color: '#c084fc', desc: 'Reality Warper', special: 'nebula' },
-    { id: 'ironman', label: 'Iron Man', level: 0, color: '#ef4444', desc: 'Jarvis HUD Engaged', special: 'metallic', secret: true },
-    { id: 'hologram', label: 'Hologram', level: 0, color: '#00ffff', desc: 'Secret Protocol', special: 'hologram', secret: true },
-    { id: 'rainbow', label: 'Rainbow', level: 0, color: 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000)', desc: 'Exclusive Rewards', special: 'matrix', secret: true },
+    { id: 'cyan', label: 'Cyan', level: 1, color: '#22d3ee', desc: 'Standard Uplink', icon: Palette },
+    { id: 'rose', label: 'Rose', level: 5, color: '#fb7185', desc: 'Enhanced Visuals', icon: Palette },
+    { id: 'emerald', label: 'Emerald', level: 10, color: '#34d399', desc: 'Tactical Overlay', icon: Palette },
+    { id: 'violet', label: 'Violet', level: 15, color: '#a78bfa', desc: 'Psionic Buffer', icon: Palette },
+    { id: 'cobalt', label: 'Cobalt', level: 20, color: '#3b82f6', desc: 'Deep Space Link', icon: Palette },
+    { id: 'crimson', label: 'Crimson', level: 40, color: '#dc2626', desc: 'Overclocked Mode', icon: Palette },
+    { id: 'gold', label: 'Gold', level: 75, color: '#facc15', desc: 'Legendary Status', special: 'shine', icon: Star },
+    { id: 'galaxy', label: 'Galaxy', level: 100, color: 'linear-gradient(135deg, #c084fc, #818cf8, #ec4899)', desc: 'Celestial Nebula Flow', special: 'nebula', icon: Brain },
+    { id: 'ironman', label: 'Iron Man', level: 0, color: '#ef4444', desc: 'Jarvis HUD', special: 'metallic', secret: true, icon: Shield },
+    { id: 'hologram', label: 'Hologram', level: 0, color: '#00ffff', desc: 'Secret Protocol', special: 'hologram', secret: true, icon: Eye },
+    { id: 'rainbow', label: 'Rainbow', level: 0, color: 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000)', desc: 'Spectrum Mode', special: 'matrix', secret: true, icon: Zap },
   ];
 
   const frameOptions = [
-    { id: 'obsidian', label: 'Standard', level: 1, class: 'frame-obsidian', desc: 'Default Armor' },
-    { id: 'default', label: 'Outline', level: 5, class: 'frame-default', desc: 'Level 5 Module' },
-    { id: 'neon', label: 'Neon Pulse', level: 10, class: 'frame-neon', desc: 'Digital Glow' },
-    { id: 'solar', label: 'Solar Flare', level: 60, class: 'frame-solar', desc: 'Atomic Core' },
-    { id: 'interstellar', label: 'Void Drifter', level: 100, class: 'frame-interstellar', desc: 'Null Space' },
-    { id: 'glitch', label: 'Glitch', level: 0, class: 'frame-glitch', desc: 'Illegal Protocol', secret: true },
+    { id: 'obsidian', label: 'Standard', level: 1, class: 'frame-obsidian', desc: 'Default Armor', color: '#1e293b' },
+    { id: 'default', label: 'Outline', level: 5, class: 'frame-default', desc: 'Level 5 Module', color: '#64748b' },
+    { id: 'neon', label: 'Neon Pulse', level: 10, class: 'frame-neon', desc: 'Digital Glow', color: '#22d3ee' },
+    { id: 'solar', label: 'Solar Flare', level: 60, class: 'frame-solar', desc: 'Atomic Core', color: '#f59e0b' },
+    { id: 'interstellar', label: 'Void Drifter', level: 100, class: 'frame-interstellar', desc: 'Dark Energy Aura', color: '#a855f7' },
+    { id: 'glitch', label: 'Glitch', level: 0, class: 'frame-glitch', desc: 'Illegal Protocol', color: '#ef4444', secret: true },
   ];
 
   const badgesList = [
@@ -78,6 +78,56 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
   const currentAvatar = characterOptions.find(c => c.id === (user.currentCharacter || 'agent-x')) || characterOptions[0];
   const expToNextLevel = user.level * 200;
   const progressPercent = Math.min((user.exp / expToNextLevel) * 100, 100);
+
+  /** Shared Selection Item Component for Unification */
+  const SelectionItem = ({ id, label, level, isUnlocked, isActive, onClick, preview, icon: Icon, special }) => html`
+    <button 
+      key=${id} 
+      disabled=${!isUnlocked} 
+      onClick=${onClick}
+      onMouseEnter=${() => isUnlocked && window.setCursorActive?.(true)}
+      onMouseLeave=${() => isUnlocked && window.setCursorActive?.(false)}
+      className=${`group relative flex flex-col items-center gap-3 p-5 rounded-3xl border transition-all duration-300 ${
+        isActive 
+          ? 'bg-slate-800 border-theme shadow-[0_0_25px_var(--primary-glow)] ring-1 ring-theme/30' 
+          : 'bg-slate-900/40 border-white/5 hover:border-white/20'
+      } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'active:scale-95'}`}
+    >
+      <!-- Preview Container -->
+      <div className=${`w-16 h-16 rounded-2xl flex items-center justify-center relative overflow-hidden ${isActive ? 'bg-theme/10 shadow-[inset_0_0_15px_var(--primary-glow)]' : 'bg-slate-800/50'}`}>
+         ${preview ? preview : html`<${Icon} size=${28} className=${isActive ? 'text-theme' : 'text-slate-400'} />`}
+         
+         ${special === 'shine' && html`<div className="absolute inset-0 effect-shine opacity-30" />`}
+         ${special === 'nebula' && html`<div className="absolute inset-0 bg-gradient-to-br from-purple-500/40 via-blue-500/40 to-pink-500/40 animate-pulse" />`}
+      </div>
+      
+      <!-- Label and Status -->
+      <div className="text-center">
+         <span className=${`text-[9px] font-orbitron font-bold tracking-tight block truncate w-full max-w-[80px] ${isActive ? 'text-theme' : 'text-slate-400'}`}>${label}</span>
+         
+         ${!isUnlocked ? html`
+           <div className="mt-1 flex items-center justify-center gap-1">
+              <${Lock} size=${8} className="text-rose-500" />
+              <span className="text-[7px] font-black text-rose-500 uppercase">LVL ${level}</span>
+           </div>
+         ` : isActive ? html`
+           <div className="mt-1 flex items-center justify-center gap-1">
+              <${Check} size=${8} className="text-emerald-500" />
+              <span className="text-[7px] font-black text-emerald-500 uppercase">Active</span>
+           </div>
+         ` : html`
+           <div className="mt-1 h-2" /> 
+         `}
+      </div>
+
+      <!-- Secret Indicator -->
+      ${level === 0 && isUnlocked && html`
+        <div className="absolute top-1 right-1">
+          <${Zap} size=${10} className="text-theme animate-pulse" />
+        </div>
+      `}
+    </button>
+  `;
 
   return html`
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
@@ -133,7 +183,6 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
                     <div className="w-32 h-32 bg-theme/5 rounded-[2.5rem] flex items-center justify-center text-theme border border-theme/20 shadow-[inset_0_0_40px_var(--primary-glow)] relative z-10 transition-transform duration-500 group-hover:scale-105">
                       <${currentAvatar.icon} size=${64} />
                     </div>
-                    <!-- The dynamic frame preview -->
                     <div className=${`absolute inset-0 -m-4 ${frameOptions.find(f => f.id === (user.currentFrame || 'obsidian'))?.class || 'frame-obsidian'} pointer-events-none z-20`} />
                     
                     <div className="absolute -bottom-1 -right-1 bg-theme text-slate-950 text-xs font-black px-4 py-2 rounded-2xl border-4 border-slate-900 shadow-theme z-30">
@@ -245,45 +294,20 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
               <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4">
               ${visibleCharacters.map((c) => {
                 const isUnlocked = user.level >= c.level || (user.unlockedCharacters && user.unlockedCharacters.includes(c.id));
                 const isActive = (user.currentCharacter || 'agent-x') === c.id;
                 
-                return html`
-                  <button 
-                    key=${c.id} 
-                    disabled=${!isUnlocked} 
-                    onClick=${() => onSetCharacter(c.id)}
-                    onMouseEnter=${() => isUnlocked && window.setCursorActive?.(true)}
-                    onMouseLeave=${() => isUnlocked && window.setCursorActive?.(false)}
-                    className=${`group relative flex flex-col items-center gap-3 p-5 rounded-3xl border transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-slate-800 border-theme shadow-[0_0_20px_var(--primary-glow)]' 
-                        : 'bg-slate-900/40 border-white/5 hover:border-white/20'
-                    } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'active:scale-95'}`}
-                  >
-                    <div className=${`p-4 rounded-2xl ${isActive ? 'bg-theme/10' : 'bg-slate-800/50'} ${c.color} transition-colors`}>
-                       <${c.icon} size=${32} />
-                    </div>
-                    
-                    <div className="text-center">
-                       <span className=${`text-[9px] font-orbitron font-bold tracking-tight block ${isActive ? 'text-theme' : 'text-slate-400'}`}>${c.label}</span>
-                       ${!isUnlocked && html`
-                         <div className="mt-1 flex items-center justify-center gap-1">
-                            <${Lock} size=${8} className="text-rose-500" />
-                            <span className="text-[7px] font-black text-rose-500 uppercase">LVL ${c.level}</span>
-                         </div>
-                       `}
-                       ${isActive && html`
-                         <div className="mt-1 flex items-center justify-center gap-1">
-                            <${Check} size=${8} className="text-emerald-500" />
-                            <span className="text-[7px] font-black text-emerald-500 uppercase">Selected</span>
-                         </div>
-                       `}
-                    </div>
-                  </button>
-                `;
+                return html`<${SelectionItem} 
+                  id=${c.id} 
+                  label=${c.label} 
+                  level=${c.level} 
+                  isUnlocked=${isUnlocked} 
+                  isActive=${isActive} 
+                  onClick=${() => onSetCharacter(c.id)} 
+                  icon=${c.icon}
+                />`;
               })}
             </div>
           </section>
@@ -298,112 +322,65 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
               <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4">
               ${visibleFrames.map((f) => {
                 const isUnlocked = user.level >= f.level || (user.unlockedFrames && user.unlockedFrames.includes(f.id));
                 const isActive = (user.currentFrame || 'obsidian') === f.id;
                 
-                return html`
-                  <button 
-                    key=${f.id} 
-                    disabled=${!isUnlocked} 
-                    onClick=${() => onSetFrame(f.id)}
-                    onMouseEnter=${() => isUnlocked && window.setCursorActive?.(true)}
-                    onMouseLeave=${() => isUnlocked && window.setCursorActive?.(false)}
-                    className=${`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-slate-800 border-white shadow-[0_0_20px_rgba(255,255,255,0.1)] ring-1 ring-white/10' 
-                        : 'bg-slate-900/40 border-white/5 hover:border-white/20'
-                    } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'active:scale-95'}`}
-                  >
-                    <div className="relative w-14 h-14 shrink-0">
-                       <div className="absolute inset-0 bg-slate-800 rounded-xl flex items-center justify-center text-slate-500">
-                          <${UserIcon} size=${24} />
-                       </div>
-                       <!-- Frame Overlay Preview -->
-                       <div className=${`absolute inset-0 -m-2 ${f.class} pointer-events-none opacity-100 scale-90 group-hover:scale-100 transition-transform`} />
-                    </div>
-                    
-                    <div className="text-center">
-                       <span className=${`text-[9px] font-orbitron font-bold tracking-tight block ${isActive ? 'text-theme' : 'text-slate-400'}`}>${f.label}</span>
-                       ${!isUnlocked && html`
-                         <div className="mt-1 flex items-center justify-center gap-1">
-                            <${Lock} size=${8} className="text-rose-500" />
-                            <span className="text-[7px] font-black text-rose-500 uppercase">LVL ${f.level}</span>
-                         </div>
-                       `}
-                       ${isActive && html`
-                         <div className="mt-1 flex items-center justify-center gap-1">
-                            <${Check} size=${8} className="text-emerald-500" />
-                            <span className="text-[7px] font-black text-emerald-500 uppercase">Active</span>
-                         </div>
-                       `}
-                    </div>
-                  </button>
+                const framePreview = html`
+                  <div className="relative w-10 h-10">
+                     <div className="absolute inset-0 bg-slate-700/50 rounded-lg flex items-center justify-center text-slate-500">
+                        <${UserIcon} size=${16} />
+                     </div>
+                     <div className=${`absolute inset-0 -m-1.5 ${f.class} pointer-events-none opacity-100 scale-90 transition-transform`} />
+                  </div>
                 `;
+
+                return html`<${SelectionItem} 
+                  id=${f.id} 
+                  label=${f.label} 
+                  level=${f.level} 
+                  isUnlocked=${isUnlocked} 
+                  isActive=${isActive} 
+                  onClick=${() => onSetFrame(f.id)} 
+                  preview=${framePreview}
+                />`;
               })}
             </div>
           </section>
 
+          <!-- Visual Modules Section -->
           <section className="space-y-8">
             <div className="flex items-center gap-8 px-2">
                <div className="flex items-center gap-4 text-theme">
                   <${Palette} size=${24} />
-                  <p className="text-xs font-black uppercase tracking-[0.5em]">Visual Core Modules</p>
+                  <p className="text-xs font-black uppercase tracking-[0.5em]">Visual Modules</p>
                </div>
               <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4">
               ${visibleThemes.map((t) => {
                 const isUnlocked = user.level >= t.level || user.unlockedThemes.includes(t.id);
                 const isActive = user.currentTheme === t.id;
                 
-                return html`
-                  <button 
-                    key=${t.id} 
-                    disabled=${!isUnlocked} 
-                    onClick=${() => onSetTheme(t.id)}
-                    onMouseEnter=${() => isUnlocked && window.setCursorActive?.(true)}
-                    onMouseLeave=${() => isUnlocked && window.setCursorActive?.(false)}
-                    className=${`group relative flex h-24 rounded-2xl border transition-all duration-300 overflow-hidden ${
-                      isActive 
-                        ? 'bg-slate-800 border-white shadow-[0_0_35px_var(--primary-glow)] ring-2 ring-white/20' 
-                        : 'bg-slate-900/40 border-white/10 hover:border-theme/40 hover:bg-slate-800/60'
-                    } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'active:scale-95'}`}
-                  >
-                    <div className="w-2.5 h-full shrink-0 relative overflow-hidden">
-                       <div className=${`absolute inset-0 ${t.special === 'shine' ? 'effect-shine' : ''}`} style=${{ background: t.color }} />
-                    </div>
-                    
-                    <div className="flex-1 flex flex-col justify-center px-4 py-3 text-left relative">
-                       <div className="flex items-center justify-between mb-1">
-                          <span className=${`text-[10px] font-orbitron font-bold tracking-tight ${isActive ? 'text-theme' : 'text-slate-400'}`}>${t.label}</span>
-                          ${isActive && html`<div className="flex items-center gap-1.5"><span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Synced</span><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /></div>`}
-                          ${!isUnlocked && html`<${Lock} size=${12} className="text-rose-500" />`}
-                       </div>
-                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest truncate">${t.desc}</p>
-                       
-                       ${!isUnlocked && html`
-                         <div className="mt-2 flex items-center gap-2">
-                           <span className="text-[8px] font-black text-white bg-rose-500/20 px-2 py-0.5 rounded-md border border-rose-500/20 uppercase tracking-tighter">Auth Required: LVL ${t.level}</span>
-                         </div>
-                       `}
-                       
-                       ${isActive && html`
-                         <div className="absolute top-1/2 right-4 -translate-y-1/2 opacity-20">
-                            <${Check} size=${40} strokeWidth=${3} className="text-theme" />
-                         </div>
-                       `}
-                    </div>
-
-                    ${t.special && html`
-                      <div className="absolute -bottom-1 -right-1 opacity-20 group-hover:opacity-40 transition-opacity">
-                         <${ModuleIcon} size=${48} className="text-theme" />
-                      </div>
-                    `}
-                  </button>
+                const themePreview = html`
+                  <div className="w-10 h-10 rounded-lg shadow-inner flex items-center justify-center text-white/50" style=${{ background: t.color }}>
+                     <${t.icon} size=${16} />
+                  </div>
                 `;
+
+                return html`<${SelectionItem} 
+                  id=${t.id} 
+                  label=${t.label} 
+                  level=${t.level} 
+                  isUnlocked=${isUnlocked} 
+                  isActive=${isActive} 
+                  onClick=${() => onSetTheme(t.id)} 
+                  preview=${themePreview}
+                  special=${t.special}
+                  icon=${t.icon}
+                />`;
               })}
             </div>
           </section>
@@ -474,16 +451,30 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharact
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 20px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(300%); }
-        }
         @keyframes scan {
           0% { transform: translateY(-100%); }
           100% { transform: translateY(600%); }
         }
         .animate-scan-slow {
           animation: scan 12s linear infinite;
+        }
+        .effect-shine {
+          background-image: linear-gradient(
+              110deg, 
+              rgba(255,255,255,0) 0%, 
+              rgba(255,255,255,0.2) 20%, 
+              rgba(255,255,255,0.7) 45%, 
+              rgba(255,255,255,1) 50%, 
+              rgba(255,255,255,0.7) 55%, 
+              rgba(255,255,255,0.2) 80%, 
+              rgba(255,255,255,0) 100%
+          );
+          background-size: 250% 100%;
+          animation: ultra-shine 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes ultra-shine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
       `}</style>
     </div>

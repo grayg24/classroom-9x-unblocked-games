@@ -1,6 +1,6 @@
 import React from 'react';
 import htm from 'htm';
-import { Search, Rocket, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
+import { Search, Rocket, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff, Bot } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
@@ -12,7 +12,7 @@ const Navbar = ({ user, onSearch, onLogoClick }) => {
     'ghost': Ghost,
     'cyber-neko': Cat,
     'overlord': Crown,
-    'stark': Shield,
+    'stark': Bot,
     'glitch': ZapOff
   };
 

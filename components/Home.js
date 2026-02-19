@@ -1,7 +1,7 @@
 import React from 'react';
 import htm from 'htm';
 import GameCard from './GameCard.js';
-import { Sparkles, Zap, Flame, ChevronRight, User as UserIcon, Activity, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
+import { Sparkles, Zap, Flame, ChevronRight, User as UserIcon, Activity, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff, Bot } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
@@ -28,7 +28,7 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
     'ghost': Ghost,
     'cyber-neko': Cat,
     'overlord': Crown,
-    'stark': Shield,
+    'stark': Bot,
     'glitch': ZapOff
   };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import htm from 'htm';
 import { CATEGORIES, getIcon } from '../constants.js';
-import { Home, Library, Heart, Settings as SettingsIcon, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
+import { Home, Library, Heart, Settings as SettingsIcon, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff, Bot } from 'lucide-react';
 import { AppRoute } from '../types.js';
 
 const html = htm.bind(React.createElement);
@@ -41,7 +41,7 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
     'ghost': Ghost,
     'cyber-neko': Cat,
     'overlord': Crown,
-    'stark': Shield,
+    'stark': Bot,
     'glitch': ZapOff
   };
 
