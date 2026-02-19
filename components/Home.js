@@ -1,13 +1,88 @@
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import htm from 'htm';
 import GameCard from './GameCard.js';
-import { Sparkles, Zap, Flame, ChevronRight, User as UserIcon, Activity, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff, Bot } from 'lucide-react';
+import { 
+  Calendar, 
+  Zap, 
+  Flame, 
+  ChevronRight, 
+  User as UserIcon, 
+  Activity, 
+  Zap as ZapIcon, 
+  Shield, 
+  Ghost, 
+  Cat, 
+  Crown, 
+  ZapOff, 
+  Bot, 
+  Database,
+  Clock
+} from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
 const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchToLibrary }) => {
-  const featuredGames = games.filter(g => g.isFeatured);
-  const otherGames = games.filter(g => !g.isFeatured).slice(0, 4);
+  const [timeLeft, setTimeLeft] = useState('Calculating...');
+
+  // Live Timer for Midnight EST
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = new Date();
+      // Get current time in EST
+      const estStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+      const estDate = new Date(estStr);
+      
+      // Calculate next midnight in EST
+      const midnight = new Date(estStr);
+      midnight.setHours(24, 0, 0, 0);
+      
+      const diff = midnight.getTime() - estDate.getTime();
+      
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setTimeLeft(`${h}h ${m}m ${s}s`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Daily Picks Rotation Logic (EST Sensitive)
+  const dailyPicks = useMemo(() => {
+    if (!games || games.length === 0) return [];
+    
+    // Get the current date in EST to create a stable daily seed
+    const now = new Date();
+    const estDateStr = now.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    
+    // Create a simple hash from the date string "MM/DD/YYYY"
+    const seed = estDateStr.split('/').reduce((acc, val) => acc + parseInt(val), 0);
+    
+    const picks = [];
+    const numToPick = Math.min(games.length, 3);
+    const indicesUsed = new Set();
+    
+    // Shuffle/Pick deterministically based on seed
+    for (let i = 0; i < numToPick; i++) {
+      let attempt = 0;
+      let index = (seed + i * 13) % games.length;
+      
+      while (indicesUsed.has(index) && attempt < games.length) {
+        index = (index + 1) % games.length;
+        attempt++;
+      }
+      
+      indicesUsed.add(index);
+      picks.push(games[index]);
+    }
+    
+    return picks;
+  }, [games]);
+
+  const otherGames = games.filter(g => !dailyPicks.find(p => p.id === g.id)).slice(0, 4);
 
   // Profile Frame Mapping
   const frameClassMap = {
@@ -50,13 +125,11 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
         <div className="absolute inset-y-0 left-0 flex flex-col justify-center px-10 md:px-20 w-full md:w-3/5 lg:w-1/2 space-y-8 z-10 bg-slate-950 shadow-[60px_0_100px_rgba(2,6,23,1)]">
           
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <!-- Profile Avatar Integration -->
             <div className="relative shrink-0">
               <div className="w-24 h-24 md:w-32 md:h-32 bg-theme/5 rounded-[2.5rem] flex items-center justify-center text-theme border border-theme/20 shadow-[inset_0_0_40px_var(--primary-glow)] relative z-10 transition-transform duration-500 group-hover:scale-105">
                 <${CurrentAvatarIcon} size=${48} className="md:w-16 md:h-16" />
               </div>
               
-              <!-- Dynamic Frame Selection Overlay -->
               <div className=${`absolute inset-0 -m-3 ${activeFrameClass} pointer-events-none z-20`} />
               
               <div className="absolute -bottom-1 -right-1 bg-theme text-slate-950 text-[10px] font-black px-3 py-1.5 rounded-xl border-4 border-slate-950 shadow-theme z-30">
@@ -106,18 +179,35 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
       </section>
 
       <section>
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 bg-theme/20 rounded-2xl flex items-center justify-center text-theme border border-theme/20">
-             <${Sparkles} className="animate-pulse" />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-theme/20 rounded-2xl flex items-center justify-center text-theme border border-theme/20 shadow-[0_0_15px_var(--primary-glow)]">
+               <${Calendar} className="animate-pulse" />
+            </div>
+            <div>
+              <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Daily <span className="text-theme">Picks</span></h2>
+              <div className="h-1 w-20 bg-theme mt-1 rounded-full"></div>
+            </div>
           </div>
-          <div>
-            <h2 className="font-orbitron font-bold text-3xl uppercase tracking-tight">Prime <span className="text-theme">Picks</span></h2>
-            <div className="h-1 w-20 bg-theme mt-1 rounded-full"></div>
+          <div className="flex items-center gap-3 px-5 py-2.5 bg-slate-900/60 rounded-2xl border border-white/5 self-start md:self-auto shadow-xl">
+             <${Clock} size=${14} className="text-theme" />
+             <div className="flex flex-col">
+               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Next Rotation In:</span>
+               <span className="text-xs font-orbitron font-bold text-white tracking-wider">${timeLeft}</span>
+             </div>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          ${featuredGames.map(game => html`<${GameCard} key=${game.id} game=${game} isFavorite=${favorites.includes(game.id)} onToggleFavorite=${onToggleFavorite} onPlay=${onPlayGame} />`)}
+          ${dailyPicks.length > 0 
+            ? dailyPicks.map(game => html`<${GameCard} key=${game.id} game=${game} isFavorite=${favorites.includes(game.id)} onToggleFavorite=${onToggleFavorite} onPlay=${onPlayGame} />`)
+            : html`
+              <div className="col-span-full py-20 bg-slate-900/40 rounded-[2.5rem] border border-dashed border-white/5 flex flex-col items-center justify-center gap-4">
+                <${Database} size=${40} className="text-slate-700" />
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Daily Database Empty</p>
+              </div>
+            `
+          }
         </div>
       </section>
 
@@ -142,7 +232,15 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          ${otherGames.map(game => html`<${GameCard} key=${game.id} game=${game} isFavorite=${favorites.includes(game.id)} onToggleFavorite=${onToggleFavorite} onPlay=${onPlayGame} />`)}
+          ${otherGames.length > 0 
+            ? otherGames.map(game => html`<${GameCard} key=${game.id} game=${game} isFavorite=${favorites.includes(game.id)} onToggleFavorite=${onToggleFavorite} onPlay=${onPlayGame} />`)
+            : html`
+              <div className="col-span-full py-16 bg-slate-900/20 rounded-[2rem] border border-white/5 flex flex-col items-center justify-center gap-3">
+                <${Ghost} size=${32} className="text-slate-800" />
+                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">No trending intel found</p>
+              </div>
+            `
+          }
         </div>
       </section>
 

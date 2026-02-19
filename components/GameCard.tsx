@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Game } from '../types';
 import { Play, Heart, Star, Zap } from 'lucide-react';
@@ -22,7 +21,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, isFavorite, onToggleFavorite,
           <img 
             src={game.thumbnail} 
             alt={game.title} 
-            className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>

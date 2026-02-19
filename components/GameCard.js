@@ -20,7 +20,7 @@ const GameCard = ({ game, isFavorite, onToggleFavorite, onPlay }) => {
           <img 
             src=${game.thumbnail} 
             alt=${game.title} 
-            className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
@@ -59,7 +59,7 @@ const GameCard = ({ game, isFavorite, onToggleFavorite, onPlay }) => {
             </h3>
             <div className="flex items-center gap-1 text-yellow-500 shrink-0">
               <${Star} size=${12} className="fill-current" />
-              <span className="text-[11px] font-black">4.9</span>
+              <span className="text-[11px] font-black">${game.rating || '4.5'}</span>
             </div>
           </div>
           <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed h-8 group-hover:text-slate-400 transition-colors">
