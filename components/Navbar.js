@@ -1,10 +1,23 @@
 import React from 'react';
 import htm from 'htm';
-import { Search, Rocket } from 'lucide-react';
+import { Search, Rocket, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
 const Navbar = ({ user, onSearch, onLogoClick }) => {
+  // Avatar Icon Mapping
+  const avatarIcons = {
+    'agent-x': UserIcon,
+    'viper': ZapIcon,
+    'ghost': Ghost,
+    'cyber-neko': Cat,
+    'overlord': Crown,
+    'stark': Shield,
+    'glitch': ZapOff
+  };
+
+  const CurrentAvatarIcon = avatarIcons[user.currentCharacter || 'agent-x'] || UserIcon;
+
   return html`
     <nav className="fixed top-0 left-0 right-0 h-16 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800 z-[60] px-4 md:px-8 flex items-center justify-between">
       <button onClick=${onLogoClick} className="flex items-center gap-2 group">
@@ -29,14 +42,16 @@ const Navbar = ({ user, onSearch, onLogoClick }) => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex flex-col items-end text-right">
-            <span className="text-xs font-black text-white uppercase tracking-wider">Local Profile</span>
-            <span className="text-[10px] font-bold text-theme uppercase">Status: Active</span>
+            <span className="text-xs font-black text-white uppercase tracking-wider">${user.username}</span>
+            <span className="text-[10px] font-bold text-theme uppercase">Operative Active</span>
           </div>
           <div className="flex items-center gap-2 p-1.5 bg-slate-900 rounded-xl border border-white/5">
-            <div className="w-8 h-8 rounded-lg bg-theme flex items-center justify-center text-slate-950 font-black text-xs shadow-theme">
-              ${user.level}
+            <div className="w-8 h-8 rounded-lg bg-theme flex items-center justify-center text-slate-950 font-black text-xs shadow-theme overflow-hidden">
+              <${CurrentAvatarIcon} size=${14} />
             </div>
-            <span className="hidden sm:inline text-[10px] font-black text-slate-400 uppercase tracking-widest pr-2">LVL</span>
+            <div className="flex items-center gap-1.5 px-2 bg-slate-800 rounded-lg">
+               <span className="text-[10px] font-black text-white uppercase">LVL ${user.level}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -54,6 +54,19 @@
             --primary-dark: #a16207; 
         }
 
+        [data-theme="ironman"] {
+            --primary: #ef4444;
+            --primary-glow: rgba(250, 204, 21, 0.5);
+            --primary-dark: #991b1b;
+            --bg-dark: #100a0a;
+        }
+
+        [data-theme="ironman"] .bg-theme {
+            background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.3) !important;
+            border: 1px solid #facc15 !important;
+        }
+
         [data-theme="hologram"] {
             --primary: #00ffff;
             --primary-glow: rgba(0, 255, 255, 0.6);

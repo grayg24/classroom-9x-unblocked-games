@@ -4,12 +4,13 @@ import {
   X, Edit2, User as UserIcon, Trophy, Gamepad2, 
   Palette, Lock, Check, Zap, Award, Star, Activity, 
   ChevronRight, Brain, Target, Heart, Scan, Terminal,
-  Cpu, Flame, ShieldCheck, Cpu as ModuleIcon, Layout
+  Cpu, Flame, ShieldCheck, Cpu as ModuleIcon, Layout,
+  Eye, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff
 } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
-const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) => {
+const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onSetCharacter, onClose }) => {
   const [newUsername, setNewUsername] = useState(user.username);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -28,6 +29,16 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
     }
   };
 
+  const characterOptions = [
+    { id: 'agent-x', label: 'Default', level: 1, icon: UserIcon, desc: 'Basic Operative', color: 'text-slate-400' },
+    { id: 'viper', label: 'Viper', level: 15, icon: ZapIcon, desc: 'Speed Demon', color: 'text-emerald-400' },
+    { id: 'ghost', label: 'Ghost', level: 30, icon: Ghost, desc: 'Stealth Specialist', color: 'text-violet-400' },
+    { id: 'cyber-neko', label: 'Cyber Neko', level: 50, icon: Cat, desc: 'High-Tech Feline', color: 'text-rose-400' },
+    { id: 'overlord', label: 'Overlord', level: 100, icon: Crown, desc: 'Supreme Ruler', color: 'text-amber-400' },
+    { id: 'stark', label: 'Stark', level: 0, icon: Shield, desc: 'Iron Core', color: 'text-red-500', secret: true },
+    { id: 'glitch', label: 'Protocol Zero', level: 0, icon: ZapOff, desc: 'Error: Undefined', color: 'text-cyan-400', secret: true },
+  ];
+
   const themeOptions = [
     { id: 'cyan', label: 'Cyan', level: 1, color: '#22d3ee', desc: 'Standard Uplink' },
     { id: 'rose', label: 'Rose', level: 5, color: '#fb7185', desc: 'Enhanced Visuals' },
@@ -37,13 +48,14 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
     { id: 'crimson', label: 'Crimson', level: 40, color: '#dc2626', desc: 'Overclocked Mode' },
     { id: 'gold', label: 'Gold', level: 75, color: '#facc15', desc: 'Legendary Status', special: 'shine' },
     { id: 'galaxy', label: 'Galaxy', level: 100, color: '#c084fc', desc: 'Reality Warper', special: 'nebula' },
+    { id: 'ironman', label: 'Iron Man', level: 0, color: '#ef4444', desc: 'Jarvis HUD Engaged', special: 'metallic', secret: true },
     { id: 'hologram', label: 'Hologram', level: 0, color: '#00ffff', desc: 'Secret Protocol', special: 'hologram', secret: true },
     { id: 'rainbow', label: 'Rainbow', level: 0, color: 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000)', desc: 'Exclusive Rewards', special: 'matrix', secret: true },
   ];
 
   const frameOptions = [
-    { id: 'obsidian', label: 'Obsidian', level: 1, class: 'frame-obsidian', desc: 'Default Armor' },
-    { id: 'default', label: 'Standard', level: 5, class: 'frame-default', desc: 'Level 5 Module' },
+    { id: 'obsidian', label: 'Standard', level: 1, class: 'frame-obsidian', desc: 'Default Armor' },
+    { id: 'default', label: 'Outline', level: 5, class: 'frame-default', desc: 'Level 5 Module' },
     { id: 'neon', label: 'Neon Pulse', level: 10, class: 'frame-neon', desc: 'Digital Glow' },
     { id: 'solar', label: 'Solar Flare', level: 60, class: 'frame-solar', desc: 'Atomic Core' },
     { id: 'interstellar', label: 'Void Drifter', level: 100, class: 'frame-interstellar', desc: 'Null Space' },
@@ -55,13 +67,15 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
     { id: 'fav_collector', label: 'Stasher', sub: '5 Favorites', icon: Heart, condition: user.favorites?.length >= 5, color: 'from-rose-500/20 to-rose-500/5', iconColor: 'text-rose-500' },
     { id: 'veteran', label: 'Sentinel', sub: 'Level 10', icon: Award, condition: user.level >= 10, color: 'from-violet-500/20 to-violet-500/5', iconColor: 'text-violet-500' },
     { id: 'elite', label: 'Overseer', sub: 'Level 50', icon: Star, condition: user.level >= 50, color: 'from-cyan-500/20 to-cyan-500/5', iconColor: 'text-cyan-500' },
-    { id: 'pro', label: 'Warlord', sub: 'Play 50 Games', icon: Target, condition: user.gamesPlayed >= 50, color: 'from-emerald-500/20 to-emerald-500/5', iconColor: 'text-emerald-500' },
+    { id: 'pro', label: 'Warlord', sub: 'Play 50 Games', icon: Target, condition: user.level >= 50, color: 'from-emerald-500/20 to-emerald-500/5', iconColor: 'text-emerald-500' },
     { id: 'hacker', label: 'Collector', sub: 'Collect 5 Themes', icon: Brain, condition: user.unlockedThemes?.length >= 5, color: 'from-blue-500/20 to-blue-500/5', iconColor: 'text-blue-500' },
   ];
 
   const visibleThemes = themeOptions.filter(t => !t.secret || user.unlockedThemes.includes(t.id));
   const visibleFrames = frameOptions.filter(f => !f.secret || (user.unlockedFrames && user.unlockedFrames.includes(f.id)));
+  const visibleCharacters = characterOptions.filter(c => !c.secret || (user.unlockedCharacters && user.unlockedCharacters.includes(c.id)));
   
+  const currentAvatar = characterOptions.find(c => c.id === (user.currentCharacter || 'agent-x')) || characterOptions[0];
   const expToNextLevel = user.level * 200;
   const progressPercent = Math.min((user.exp / expToNextLevel) * 100, 100);
 
@@ -82,7 +96,7 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
         <div className="relative z-10 flex items-center justify-between px-10 py-6 bg-slate-950/60 border-b border-white/5">
           <div className="flex items-center gap-6">
             <div className="p-3.5 bg-theme/10 rounded-2xl text-theme border border-theme/20 shadow-[0_0_25px_var(--primary-glow)]">
-              <${UserIcon} size=${28} />
+              <${currentAvatar.icon} size=${28} />
             </div>
             <div>
               <h2 className="font-orbitron font-black text-2xl uppercase italic tracking-tighter text-white leading-none">
@@ -117,7 +131,7 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
                 <div className="relative flex flex-col md:flex-row items-center gap-10">
                   <div className="relative shrink-0">
                     <div className="w-32 h-32 bg-theme/5 rounded-[2.5rem] flex items-center justify-center text-theme border border-theme/20 shadow-[inset_0_0_40px_var(--primary-glow)] relative z-10 transition-transform duration-500 group-hover:scale-105">
-                      <${UserIcon} size=${64} />
+                      <${currentAvatar.icon} size=${64} />
                     </div>
                     <!-- The dynamic frame preview -->
                     <div className=${`absolute inset-0 -m-4 ${frameOptions.find(f => f.id === (user.currentFrame || 'obsidian'))?.class || 'frame-obsidian'} pointer-events-none z-20`} />
@@ -153,7 +167,7 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
                             <div className="flex items-center justify-center md:justify-start gap-5 mt-4">
                                <div className="flex items-center gap-2 text-theme">
                                  <${Activity} size=${16} className="animate-pulse" />
-                                 <span className="text-[11px] font-black uppercase tracking-[0.3em]">Signal Optimized</span>
+                                 <span className="text-[11px] font-black uppercase tracking-[0.3em]">${currentAvatar.label} Active</span>
                                </div>
                                <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                                <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">Verified Operative</span>
@@ -220,6 +234,59 @@ const ProfileModal = ({ user, onUpdateUser, onSetTheme, onSetFrame, onClose }) =
               </div>
             </div>
           </div>
+
+          <!-- Avatars Section -->
+          <section className="space-y-8">
+            <div className="flex items-center gap-8 px-2">
+               <div className="flex items-center gap-4 text-theme">
+                  <${Eye} size=${24} />
+                  <p className="text-xs font-black uppercase tracking-[0.5em]">Avatars</p>
+               </div>
+              <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+              ${visibleCharacters.map((c) => {
+                const isUnlocked = user.level >= c.level || (user.unlockedCharacters && user.unlockedCharacters.includes(c.id));
+                const isActive = (user.currentCharacter || 'agent-x') === c.id;
+                
+                return html`
+                  <button 
+                    key=${c.id} 
+                    disabled=${!isUnlocked} 
+                    onClick=${() => onSetCharacter(c.id)}
+                    onMouseEnter=${() => isUnlocked && window.setCursorActive?.(true)}
+                    onMouseLeave=${() => isUnlocked && window.setCursorActive?.(false)}
+                    className=${`group relative flex flex-col items-center gap-3 p-5 rounded-3xl border transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-slate-800 border-theme shadow-[0_0_20px_var(--primary-glow)]' 
+                        : 'bg-slate-900/40 border-white/5 hover:border-white/20'
+                    } ${!isUnlocked ? 'opacity-40 grayscale cursor-not-allowed' : 'active:scale-95'}`}
+                  >
+                    <div className=${`p-4 rounded-2xl ${isActive ? 'bg-theme/10' : 'bg-slate-800/50'} ${c.color} transition-colors`}>
+                       <${c.icon} size=${32} />
+                    </div>
+                    
+                    <div className="text-center">
+                       <span className=${`text-[9px] font-orbitron font-bold tracking-tight block ${isActive ? 'text-theme' : 'text-slate-400'}`}>${c.label}</span>
+                       ${!isUnlocked && html`
+                         <div className="mt-1 flex items-center justify-center gap-1">
+                            <${Lock} size=${8} className="text-rose-500" />
+                            <span className="text-[7px] font-black text-rose-500 uppercase">LVL ${c.level}</span>
+                         </div>
+                       `}
+                       ${isActive && html`
+                         <div className="mt-1 flex items-center justify-center gap-1">
+                            <${Check} size=${8} className="text-emerald-500" />
+                            <span className="text-[7px] font-black text-emerald-500 uppercase">Selected</span>
+                         </div>
+                       `}
+                    </div>
+                  </button>
+                `;
+              })}
+            </div>
+          </section>
 
           <!-- Neural Frames Section -->
           <section className="space-y-8">

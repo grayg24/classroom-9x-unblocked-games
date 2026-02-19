@@ -1,7 +1,7 @@
 import React from 'react';
 import htm from 'htm';
 import { CATEGORIES, getIcon } from '../constants.js';
-import { Home, Library, Heart, Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
+import { Home, Library, Heart, Settings as SettingsIcon, User as UserIcon, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
 import { AppRoute } from '../types.js';
 
 const html = htm.bind(React.createElement);
@@ -24,15 +24,28 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
 
   // Profile Frame Mapping (Sidebar Mini)
   const frameClassMap = {
+    'obsidian': 'frame-obsidian',
     'default': 'frame-default',
     'neon': 'frame-neon',
-    'obsidian': 'frame-obsidian',
     'solar': 'frame-solar',
     'interstellar': 'frame-interstellar',
     'glitch': 'frame-glitch'
   };
 
-  const activeFrameClass = frameClassMap[user.currentFrame || 'default'] || 'frame-default';
+  const activeFrameClass = frameClassMap[user.currentFrame || 'obsidian'] || 'frame-obsidian';
+
+  // Avatar Icon Mapping
+  const avatarIcons = {
+    'agent-x': UserIcon,
+    'viper': ZapIcon,
+    'ghost': Ghost,
+    'cyber-neko': Cat,
+    'overlord': Crown,
+    'stark': Shield,
+    'glitch': ZapOff
+  };
+
+  const CurrentAvatarIcon = avatarIcons[user.currentCharacter || 'agent-x'] || UserIcon;
 
   return html`
     <div className="p-4 flex flex-col gap-8 h-full">
@@ -87,7 +100,7 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
             
             <div className="flex items-center justify-between mb-3 relative z-10">
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                <${UserIcon} size=${12} className="text-theme" />
+                <${CurrentAvatarIcon} size=${12} className="text-theme" />
                 Profile
               </span>
               <span className="text-[10px] font-black text-theme uppercase">LVL ${user.level}</span>

@@ -1,7 +1,7 @@
 import React from 'react';
 import htm from 'htm';
 import GameCard from './GameCard.js';
-import { Sparkles, Zap, Flame, ChevronRight, User as UserIcon, Activity } from 'lucide-react';
+import { Sparkles, Zap, Flame, ChevronRight, User as UserIcon, Activity, Zap as ZapIcon, Shield, Ghost, Cat, Crown, ZapOff } from 'lucide-react';
 
 const html = htm.bind(React.createElement);
 
@@ -21,6 +21,19 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
 
   const activeFrameClass = frameClassMap[user.currentFrame || 'obsidian'] || 'frame-obsidian';
 
+  // Avatar Icon Mapping
+  const avatarIcons = {
+    'agent-x': UserIcon,
+    'viper': ZapIcon,
+    'ghost': Ghost,
+    'cyber-neko': Cat,
+    'overlord': Crown,
+    'stark': Shield,
+    'glitch': ZapOff
+  };
+
+  const CurrentAvatarIcon = avatarIcons[user.currentCharacter || 'agent-x'] || UserIcon;
+
   return html`
     <div className="space-y-20 pb-20 animate-in fade-in duration-1000">
       
@@ -37,10 +50,10 @@ const Home = ({ user, games, favorites, onToggleFavorite, onPlayGame, onSwitchTo
         <div className="absolute inset-y-0 left-0 flex flex-col justify-center px-10 md:px-20 w-full md:w-3/5 lg:w-1/2 space-y-8 z-10 bg-slate-950 shadow-[60px_0_100px_rgba(2,6,23,1)]">
           
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <!-- Profile Icon Integration -->
+            <!-- Profile Avatar Integration -->
             <div className="relative shrink-0">
               <div className="w-24 h-24 md:w-32 md:h-32 bg-theme/5 rounded-[2.5rem] flex items-center justify-center text-theme border border-theme/20 shadow-[inset_0_0_40px_var(--primary-glow)] relative z-10 transition-transform duration-500 group-hover:scale-105">
-                <${UserIcon} size=${48} className="md:w-16 md:h-16" />
+                <${CurrentAvatarIcon} size=${48} className="md:w-16 md:h-16" />
               </div>
               
               <!-- Dynamic Frame Selection Overlay -->

@@ -26,6 +26,8 @@ const DEFAULT_USER = {
   unlockedThemes: ['cyan'],
   currentFrame: 'obsidian',
   unlockedFrames: ['obsidian'],
+  currentCharacter: 'agent-x',
+  unlockedCharacters: ['agent-x'],
   unlockedCursors: ['default'],
   favorites: [],
   hasSetProfile: false,
@@ -98,6 +100,7 @@ const App = () => {
       let newLevel = prev.level;
       let unlockedThemes = [...prev.unlockedThemes];
       let unlockedFrames = [...(prev.unlockedFrames || ['obsidian'])];
+      let unlockedCharacters = [...(prev.unlockedCharacters || ['agent-x'])];
       
       if (newExp >= requiredForNext) {
         newLevel += 1;
@@ -112,13 +115,24 @@ const App = () => {
 
         // Frames
         const frameUnlocks = {
-          5: 'default',   // Standard frame now at Level 5
-          10: 'neon',     // Neon frame now at Level 10
+          5: 'default',
+          10: 'neon',
           60: 'solar',
           100: 'interstellar'
         };
         if (frameUnlocks[newLevel] && !unlockedFrames.includes(frameUnlocks[newLevel])) {
           unlockedFrames.push(frameUnlocks[newLevel]);
+        }
+
+        // Characters
+        const charUnlocks = {
+          15: 'viper',
+          30: 'ghost',
+          50: 'cyber-neko',
+          100: 'overlord'
+        };
+        if (charUnlocks[newLevel] && !unlockedCharacters.includes(charUnlocks[newLevel])) {
+          unlockedCharacters.push(charUnlocks[newLevel]);
         }
       }
 
@@ -128,6 +142,7 @@ const App = () => {
         level: newLevel, 
         unlockedThemes,
         unlockedFrames,
+        unlockedCharacters,
         gamesPlayed: newGamesPlayed 
       };
     });
@@ -135,6 +150,7 @@ const App = () => {
 
   const setTheme = (theme) => setUser({ ...user, currentTheme: theme });
   const setFrame = (frame) => setUser({ ...user, currentFrame: frame });
+  const setCharacter = (char) => setUser({ ...user, currentCharacter: char });
 
   const updateSettings = (settings) => {
     setUser(prev => ({ ...prev, settings: { ...prev.settings, ...settings } }));
@@ -146,9 +162,10 @@ const App = () => {
     if (cleanCode === 'glitch') {
       setUser(prev => ({
         ...prev,
-        unlockedFrames: Array.from(new Set([...(prev.unlockedFrames || []), 'glitch']))
+        unlockedFrames: Array.from(new Set([...(prev.unlockedFrames || []), 'glitch'])),
+        unlockedCharacters: Array.from(new Set([...(prev.unlockedCharacters || []), 'glitch']))
       }));
-      return { success: true, message: 'PROTOCOL BREACH: GLITCH FRAME ACQUIRED' };
+      return { success: true, message: 'PROTOCOL BREACH: GLITCH CHARACTER ACQUIRED' };
     }
 
     if (cleanCode === 'rainbow') {
@@ -167,14 +184,25 @@ const App = () => {
       return { success: true, message: 'VIRTUAL DEPLOYMENT: HOLOGRAM MODULE ACTIVATED' };
     }
 
+    if (cleanCode === 'jarvis') {
+      setUser(prev => ({
+        ...prev,
+        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'ironman'])),
+        unlockedCharacters: Array.from(new Set([...(prev.unlockedCharacters || []), 'stark']))
+      }));
+      return { success: true, message: 'WELCOME HOME, SIR: STARK AVATAR UNLOCKED' };
+    }
+
     if (cleanCode === '9xisback') {
-      const allThemes = ['cyan', 'rose', 'emerald', 'violet', 'cobalt', 'crimson', 'gold', 'galaxy']; // Excluded hologram and rainbow
+      const allThemes = ['cyan', 'rose', 'emerald', 'violet', 'cobalt', 'crimson', 'gold', 'galaxy'];
       const allFrames = ['obsidian', 'default', 'neon', 'solar', 'interstellar'];
+      const allChars = ['agent-x', 'viper', 'ghost', 'cyber-neko', 'overlord'];
       setUser(prev => ({
         ...prev,
         level: prev.level + 100,
         unlockedThemes: Array.from(new Set([...prev.unlockedThemes, ...allThemes])),
-        unlockedFrames: Array.from(new Set([...(prev.unlockedFrames || []), ...allFrames]))
+        unlockedFrames: Array.from(new Set([...(prev.unlockedFrames || []), ...allFrames])),
+        unlockedCharacters: Array.from(new Set([...(prev.unlockedCharacters || []), ...allChars]))
       }));
       return { success: true, message: 'OPERATIVE CLEARANCE GRANTED: +100 LEVELS' };
     }
@@ -233,7 +261,7 @@ const App = () => {
     >
       ${renderContent()}
       ${activeGame && html`<${GameModal} game=${activeGame} isFavorite=${user.favorites.includes(activeGame.id)} onToggleFavorite=${toggleFavorite} onClose=${() => setActiveGame(null)} />`}
-      ${isProfileModalOpen && html`<${ProfileModal} user=${user} onUpdateUser=${(updates) => setUser(prev => ({ ...prev, ...updates }))} onUpdateSettings=${updateSettings} onSetTheme=${setTheme} onSetFrame=${setFrame} onClose=${() => setIsProfileModalOpen(false)} />`}
+      ${isProfileModalOpen && html`<${ProfileModal} user=${user} onUpdateUser=${(updates) => setUser(prev => ({ ...prev, ...updates }))} onUpdateSettings=${updateSettings} onSetTheme=${setTheme} onSetFrame=${setFrame} onSetCharacter=${setCharacter} onClose=${() => setIsProfileModalOpen(false)} />`}
       ${showInitialModal && html`<${InitialNameModal} onSubmit=${handleInitialNameSubmit} />`}
     <//>
   `;
