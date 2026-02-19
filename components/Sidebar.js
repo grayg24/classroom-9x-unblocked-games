@@ -22,19 +22,18 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
     </button>
   `;
 
-  // Profile Frame Mapping (Sidebar Mini)
   const frameClassMap = {
     'obsidian': 'frame-obsidian',
     'default': 'frame-default',
     'neon': 'frame-neon',
     'solar': 'frame-solar',
     'interstellar': 'frame-interstellar',
+    'hologram': 'frame-hologram',
     'glitch': 'frame-glitch'
   };
 
   const activeFrameClass = frameClassMap[user.currentFrame || 'obsidian'] || 'frame-obsidian';
 
-  // Avatar Icon Mapping
   const avatarIcons = {
     'agent-x': UserIcon,
     'viper': ZapIcon,
@@ -46,6 +45,11 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
   };
 
   const CurrentAvatarIcon = avatarIcons[user.currentCharacter || 'agent-x'] || UserIcon;
+  
+  // XP resets every 200 points per level in App.js logic
+  const expForCurrentLevel = (user.level - 1) * 200;
+  const relativeExp = user.exp - expForCurrentLevel;
+  const progressPercent = Math.min((relativeExp / 200) * 100, 100);
 
   return html`
     <div className="p-4 flex flex-col gap-8 h-full">
@@ -95,26 +99,43 @@ const Sidebar = ({ currentView, selectedCategoryId, user, onViewChange, onProfil
           >
             <div className="absolute inset-0 bg-theme/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
-            <!-- Sidebar Mini Profile Frame Indication -->
-            <div className=${`absolute inset-0 -m-1 border border-white/5 opacity-10 ${activeFrameClass} pointer-events-none group-hover:opacity-30 transition-opacity`} />
-            
-            <div className="flex items-center justify-between mb-3 relative z-10">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                <${CurrentAvatarIcon} size=${12} className="text-theme" />
-                Profile
-              </span>
-              <span className="text-[10px] font-black text-theme uppercase">LVL ${user.level}</span>
+            <div className="flex items-center gap-4 relative z-10 mb-3">
+               <div className="relative shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-theme/5 flex items-center justify-center text-theme border border-theme/20 shadow-[inset_0_0_10px_var(--primary-glow)] relative z-10">
+                    <${CurrentAvatarIcon} size=${16} />
+                  </div>
+                  <div className=${`absolute inset-0 -m-1 ${activeFrameClass} pointer-events-none z-20 opacity-40 group-hover:opacity-100 transition-opacity`} />
+               </div>
+               <div className="flex-1">
+                 <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Operative</span>
+                    <span className="text-[10px] font-black text-theme uppercase">LVL ${user.level}</span>
+                 </div>
+                 <div className="text-[11px] font-orbitron font-bold text-white uppercase truncate">${user.username}</div>
+               </div>
             </div>
+
             <div className="space-y-2 relative z-10">
-              <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
-                  <span>EXP:</span>
-                  <span>${user.exp} / ${user.level * 200}</span>
+              <div className="flex justify-between text-[8px] font-bold text-slate-500 uppercase tracking-wider items-center">
+                  <span>EXP BAR</span>
+                  <div className="flex items-center gap-1 font-black">
+                    <span className="text-white">${user.level}</span>
+                    <span className="text-theme opacity-50">→</span>
+                    <span className="text-slate-400">${user.level + 1}</span>
+                  </div>
               </div>
-              <div className="w-full bg-black h-2 rounded-full overflow-hidden border border-white/5">
+              <div className="relative h-2 bg-black/60 rounded-full border border-white/5 p-0.5 flex gap-0.5 overflow-hidden">
+                ${[...Array(10)].map((_, i) => html`
                   <div 
-                    className="bg-theme h-full transition-all duration-1000 shadow-theme" 
-                    style=${{width: `${(user.exp / (user.level * 200)) * 100}%`}}
-                  ></div>
+                    key=${i}
+                    className=${`h-full flex-1 rounded-[1px] transition-all duration-700 ${
+                      (i + 1) * 10 <= progressPercent 
+                        ? 'bg-theme shadow-[0_0_8px_var(--primary-glow)]' 
+                        : 'bg-slate-900/40'
+                    }`}
+                  />
+                `)}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite] pointer-events-none" />
               </div>
             </div>
           </button>

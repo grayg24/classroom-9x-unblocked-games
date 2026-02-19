@@ -45,11 +45,11 @@ const Navbar = ({ user, onSearch, onLogoClick }) => {
             <span className="text-xs font-black text-white uppercase tracking-wider">${user.username}</span>
             <span className="text-[10px] font-bold text-theme uppercase">Operative Active</span>
           </div>
-          <div className="flex items-center gap-2 p-1.5 bg-slate-900 rounded-xl border border-white/5">
-            <div className="w-8 h-8 rounded-lg bg-theme flex items-center justify-center text-slate-950 font-black text-xs shadow-theme overflow-hidden">
+          <div className="flex items-center gap-2 p-1.5 bg-slate-900 rounded-full border border-white/5">
+            <div className="w-8 h-8 rounded-full bg-theme flex items-center justify-center text-slate-950 font-black text-xs shadow-theme overflow-hidden">
               <${CurrentAvatarIcon} size=${14} />
             </div>
-            <div className="flex items-center gap-1.5 px-2 bg-slate-800 rounded-lg">
+            <div className="flex items-center gap-1.5 px-3 bg-slate-800 rounded-full">
                <span className="text-[10px] font-black text-white uppercase">LVL ${user.level}</span>
             </div>
           </div>

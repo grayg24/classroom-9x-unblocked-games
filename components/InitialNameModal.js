@@ -28,7 +28,7 @@ const InitialNameModal = ({ onSubmit }) => {
 
         <div className="p-10 space-y-10 relative z-10">
           <div className="flex flex-col items-center text-center gap-6">
-            <div className="p-5 bg-theme/10 rounded-3xl text-theme border border-theme/20 shadow-[0_0_40px_var(--primary-glow)] animate-bounce">
+            <div className="p-5 bg-theme/10 rounded-full text-theme border border-theme/20 shadow-[0_0_40px_var(--primary-glow)] animate-bounce">
               <${UserIcon} size=${48} />
             </div>
             <div className="space-y-2">

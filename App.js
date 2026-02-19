@@ -30,6 +30,7 @@ const DEFAULT_USER = {
   unlockedCharacters: ['agent-x'],
   unlockedCursors: ['default'],
   favorites: [],
+  featuredBadgeId: null,
   hasSetProfile: false,
   settings: {
     customCursor: true,
@@ -105,7 +106,6 @@ const App = () => {
       if (newExp >= requiredForNext) {
         newLevel += 1;
         
-        // Themes
         const themeUnlocks = {
           5: 'rose', 10: 'emerald', 15: 'violet', 20: 'cobalt', 40: 'crimson', 75: 'gold', 100: 'galaxy'
         };
@@ -113,23 +113,15 @@ const App = () => {
           unlockedThemes.push(themeUnlocks[newLevel]);
         }
 
-        // Frames
         const frameUnlocks = {
-          5: 'default',
-          10: 'neon',
-          60: 'solar',
-          100: 'interstellar'
+          5: 'default', 10: 'neon', 60: 'solar', 100: 'interstellar'
         };
         if (frameUnlocks[newLevel] && !unlockedFrames.includes(frameUnlocks[newLevel])) {
           unlockedFrames.push(frameUnlocks[newLevel]);
         }
 
-        // Characters
         const charUnlocks = {
-          15: 'viper',
-          30: 'ghost',
-          50: 'cyber-neko',
-          100: 'overlord'
+          15: 'viper', 30: 'ghost', 50: 'cyber-neko', 100: 'overlord'
         };
         if (charUnlocks[newLevel] && !unlockedCharacters.includes(charUnlocks[newLevel])) {
           unlockedCharacters.push(charUnlocks[newLevel]);
@@ -151,6 +143,13 @@ const App = () => {
   const setTheme = (theme) => setUser({ ...user, currentTheme: theme });
   const setFrame = (frame) => setUser({ ...user, currentFrame: frame });
   const setCharacter = (char) => setUser({ ...user, currentCharacter: char });
+  
+  const setFeaturedBadge = (badgeId) => {
+    setUser(prev => ({ 
+      ...prev, 
+      featuredBadgeId: prev.featuredBadgeId === badgeId ? null : badgeId 
+    }));
+  };
 
   const updateSettings = (settings) => {
     setUser(prev => ({ ...prev, settings: { ...prev.settings, ...settings } }));
@@ -179,9 +178,10 @@ const App = () => {
     if (cleanCode === 'hologram') {
       setUser(prev => ({
         ...prev,
-        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'hologram']))
+        unlockedThemes: Array.from(new Set([...prev.unlockedThemes, 'hologram'])),
+        unlockedFrames: Array.from(new Set([...(prev.unlockedFrames || []), 'hologram']))
       }));
-      return { success: true, message: 'VIRTUAL DEPLOYMENT: HOLOGRAM MODULE ACTIVATED' };
+      return { success: true, message: 'VIRTUAL DEPLOYMENT: HOLOGRAM MODULE & FRAME ACTIVATED' };
     }
 
     if (cleanCode === 'jarvis') {
@@ -261,7 +261,7 @@ const App = () => {
     >
       ${renderContent()}
       ${activeGame && html`<${GameModal} game=${activeGame} isFavorite=${user.favorites.includes(activeGame.id)} onToggleFavorite=${toggleFavorite} onClose=${() => setActiveGame(null)} />`}
-      ${isProfileModalOpen && html`<${ProfileModal} user=${user} onUpdateUser=${(updates) => setUser(prev => ({ ...prev, ...updates }))} onUpdateSettings=${updateSettings} onSetTheme=${setTheme} onSetFrame=${setFrame} onSetCharacter=${setCharacter} onClose=${() => setIsProfileModalOpen(false)} />`}
+      ${isProfileModalOpen && html`<${ProfileModal} user=${user} onUpdateUser=${(updates) => setUser(prev => ({ ...prev, ...updates }))} onSetTheme=${setTheme} onSetFrame=${setFrame} onSetCharacter=${setCharacter} onSetFeaturedBadge=${setFeaturedBadge} onClose=${() => setIsProfileModalOpen(false)} />`}
       ${showInitialModal && html`<${InitialNameModal} onSubmit=${handleInitialNameSubmit} />`}
     <//>
   `;
